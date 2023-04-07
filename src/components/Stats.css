@@ -1,0 +1,41 @@
+.test-name {
+  color: navy;
+}
+
+.passed {
+  color: darkgreen;
+}
+
+.failed {
+  color: darkred;
+}
+
+.failed,
+.passed,
+.runs {
+  text-align: center;
+}
+
+.table {
+  border: 1px solid black;
+}
+
+.table-header tr {
+  background-color:rgb(128, 198, 255);
+}
+
+.table-header td {
+  padding: 10px;
+}
+
+td {
+  padding: 5px 10px;
+}
+
+tr:nth-child(odd+1) {
+  background-color:rgb(231, 244, 255);
+}
+
+tr:nth-child(even) {
+  background-color:rgb(211, 235, 255);
+}
