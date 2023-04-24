@@ -26,11 +26,16 @@ const PieChart = ({ statuses }: PieChartProps) => {
     const chart = new Chart(context, {
       type: "pie",
       data: {
-        labels: ["Passed", "Failed"],
+        labels: ["Passed", "Failed", "Complete", "Error"],
         datasets: [
           {
-            data: [statuses.passed, statuses.failed],
-            backgroundColor: ["#00cc66", "#ff6666"],
+            data: [
+              statuses.passed,
+              statuses.failed,
+              statuses.complete,
+              statuses.error,
+            ],
+            backgroundColor: ["#00cc66", "#ff7c7c", "#616161", "#ff0000"],
           },
         ],
       },
@@ -39,7 +44,7 @@ const PieChart = ({ statuses }: PieChartProps) => {
         plugins: {
           title: {
             display: true,
-            text: "Passed vs Failed",
+            text: "Runs Statuses",
           },
         },
       },

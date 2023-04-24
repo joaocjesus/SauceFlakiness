@@ -1,7 +1,7 @@
-import { Test, TestResult } from "../types/Tests.type";
+import { TestRun, TestResult } from "../types/Tests.type";
 
-function getFailedTests(data: { test_cases: Test[] }): TestResult[] {
-  const tests: Test[] = data?.test_cases;
+function getFailedTests(data: { test_cases: TestRun[] }): TestResult[] {
+  const tests: TestRun[] = data?.test_cases;
   if (!tests?.length) return [];
 
   const failureThreshold = 0.05;

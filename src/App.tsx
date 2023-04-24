@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Stats from "./components/Stats";
 import PieChart from "./components/PieChart";
+import { getRuns } from "./api/sauce.api";
 // import axios from "axios";
 
 function App() {
@@ -16,24 +17,23 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       // Fetch the data from the local JSON file and update the state
-      const response = await fetch("totalResults.json");
-      const json = await response.json();
-      setRunsResults(json);
+      const runs = await getRuns();
+      setRunsResults(runs);
     };
 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch the data from the local JSON file and update the state
-      const response = await fetch("testResults.json");
-      const json = await response.json();
-      setTestResults(json);
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     // Fetch the data from the local JSON file and update the state
+  //     const response = await fetch("testResults.json");
+  //     const json = await response.json();
+  //     setTestResults(json);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <>
