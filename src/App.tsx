@@ -71,17 +71,18 @@ function App() {
             <PieChart statuses={tableData.statuses} title="Total runs status" />
           </div>
         )}
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="quantity">Items to display:</label>
-          <input
-            type="number"
-            id="quantity"
-            value={rowsInput}
-            onChange={handleChange}
-          />
-          <button type="submit">Save</button>
-        </form>
+
         <div className="stats">
+          <form onSubmit={handleSubmit} className="filters">
+            <label htmlFor="quantity">Items to display:</label>
+            <input
+              type="number"
+              id="quantity"
+              value={rowsInput}
+              onChange={handleChange}
+            />
+            <button type="submit">Save</button>
+          </form>
           {tableData?.test_cases && (
             <div>
               Showing {tableData.test_cases.length} of {tableData.total}{" "}
