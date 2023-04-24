@@ -11,6 +11,8 @@ function App() {
     statuses: {
       passed: 0,
       failed: 0,
+      complete: 0,
+      error: 0,
     },
   });
 

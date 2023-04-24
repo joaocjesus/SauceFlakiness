@@ -9,11 +9,8 @@ export const getRuns = async () => {
     const encodedAuthString = btoa(authString);
 
     const params = new URLSearchParams({
-      start: '1680211033',
-      since: '1680211033',
-      end: '1680815833',
-      until: '1680815833',
       org_id: '2eb32510441f430e96161acc6fb8c441',
+      limit: '5000',
     });
 
     url.search = params.toString();
