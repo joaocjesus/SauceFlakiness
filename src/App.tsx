@@ -57,7 +57,6 @@ function App() {
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Updated");
     filterData();
   };
 
