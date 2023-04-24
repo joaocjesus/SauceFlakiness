@@ -9,18 +9,21 @@ function App() {
   const [runsResults, setRunsResults] = useState<Record<string, any>>();
   const [tableData, setTableData] = useState<Record<string, any>>();
   const [rowsInput, setRowsInput] = useState<number>(50);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    // Fetch the data from the local JSON file and update the state
+    setLoading(true);
     const runs = await getRuns();
-    setRunsResults(runs);
-    filterData();
+    if (runs) {
+      setRunsResults(runs);
+    }
+    setLoading(false);
   };
 
   const filterData = () => {
     const data = { ...runsResults };
     if (data) {
-      data.test_cases = data.test_cases.slice(0, rowsInput);
+      data.test_cases = data.test_cases?.slice(0, rowsInput);
       setTableData(data);
     }
     return data;
@@ -29,6 +32,10 @@ function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [runsResults]);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -58,11 +65,12 @@ function App() {
     <>
       <h1>Test Runs Stats</h1>
       <div className="content">
-        <div className="chart">
-          {tableData && (
+        {loading && <div>Loading data...</div>}
+        {tableData?.statuses && (
+          <div className="chart">
             <PieChart statuses={tableData.statuses} title="Total runs status" />
-          )}
-        </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <label htmlFor="quantity">Items to display:</label>
           <input
@@ -74,7 +82,7 @@ function App() {
           <button type="submit">Save</button>
         </form>
         <div className="stats">
-          {tableData && (
+          {tableData?.test_cases && (
             <div>
               Showing {tableData.test_cases.length} of {tableData.total}{" "}
               records.
