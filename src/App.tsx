@@ -5,7 +5,7 @@ import PieChart from "./components/PieChart";
 // import axios from "axios";
 
 function App() {
-  // const [testResults, setTestResults] = useState<Record<string, any>>();
+  const [testResults, setTestResults] = useState<Record<string, any>>();
   const [runsResults, setRunsResults] = useState<Record<string, any>>({
     statuses: {
       passed: 0,
@@ -24,16 +24,16 @@ function App() {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     // Fetch the data from the local JSON file and update the state
-  //     const response = await fetch("testResults.json");
-  //     const json = await response.json();
-  //     setTestResults(json);
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch the data from the local JSON file and update the state
+      const response = await fetch("testResults.json");
+      const json = await response.json();
+      setTestResults(json);
+    };
 
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
 
   return (
     <>
