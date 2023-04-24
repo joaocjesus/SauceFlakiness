@@ -7,9 +7,10 @@ Chart.register(PieController, ArcElement, Tooltip, Title);
 
 interface PieChartProps {
   statuses: Statuses;
+  title?: string;
 }
 
-const PieChart = ({ statuses }: PieChartProps) => {
+const PieChart = ({ statuses, title }: PieChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const PieChart = ({ statuses }: PieChartProps) => {
         plugins: {
           title: {
             display: true,
-            text: "Runs Statuses",
+            text: title,
           },
         },
       },

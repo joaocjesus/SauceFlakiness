@@ -1,5 +1,6 @@
 .content {
-  display: flex;
+  display: block;
+  margin: 20px;
 }
 
 h1 {
@@ -9,4 +10,9 @@ h1 {
 .chart {
   width: 400px;
   height: 400px;
+  margin: 20px 0;
+}
+
+.stats {
+  margin-top: 20px;
 }
