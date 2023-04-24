@@ -3,11 +3,9 @@ import "./App.css";
 import Stats from "./components/Stats";
 import PieChart from "./components/PieChart";
 import { getRuns } from "./api/sauce.api";
-import { log } from "console";
-// import axios from "axios";
 
 function App() {
-  const [testResults, setTestResults] = useState<Record<string, any>>();
+  // const [testResults, setTestResults] = useState<Record<string, any>>();
   const [runsResults, setRunsResults] = useState<Record<string, any>>();
   const [tableData, setTableData] = useState<Record<string, any>>();
   const [rowsInput, setRowsInput] = useState<number>(50);
