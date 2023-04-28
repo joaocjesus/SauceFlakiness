@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import "./App.css";
 import Stats from "./components/Stats";
 import PieChart from "./components/PieChart";
 import { getRuns } from "./api/sauce.api";
@@ -61,12 +60,13 @@ function App() {
   };
 
   return (
-    <>
     <div className="relative mx-auto">
-      <h1 className="text-2xl h-12 align-middle text-center bg-blue-900 text-blue-400 font-bold">Test Runs Stats</h1>
-      <div className="h-8 pl-2 align-middle bg-slate-100">
+      <h1 className="p-3 text-2xl h-14 align-middle text-center bg-blue-900 text-blue-200 font-bold">
+        Test Runs Stats
+      </h1>
+      <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm font-bold">
         {loading && <span>Loading data...</span>}
-        </div>
+      </div>
       <div className="px-8">
         {tableData?.statuses && (
           <div className="w-80 mx-auto">
@@ -92,13 +92,12 @@ function App() {
               records.
             </div>
           )}
-          <div className="rounded-lg mt-5 relative overflow-x-auto">
+          <div className="my-5 overflow-hidden rounded-lg border border-blue-300">
             <Stats data={tableData} />
           </div>
         </div>
       </div>
-      </div>
-    </>
+    </div>
   );
 }
 

@@ -1,5 +1,4 @@
 import React from "react";
-// import "./Table.css";
 
 interface TableProps {
   data: Array<{ [key: string]: any }>;
@@ -22,7 +21,7 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
     <thead className="bg-blue-300 h-10 text-left">
       <tr>
         {headers.map((header, index) => (
-          <th key={index} className="text-md">{formatStr(header)}</th>
+          <th key={index}>{formatStr(header)}</th>
         ))}
       </tr>
     </thead>
@@ -51,7 +50,7 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
   );
 
   return (
-    <table className="w-full table-auto table-compact border-solid border border-blue-300">
+    <table className="w-full table-compact">
       {renderHeader()}
       <tbody>
         {totalsRow === "above" && renderTotals()}
