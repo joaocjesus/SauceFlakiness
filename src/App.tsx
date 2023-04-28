@@ -1,5 +1,5 @@
-import { useState, useEffect, SetStateAction } from "react";
-import "./App.css";
+import { useState, useEffect } from "react";
+// import "./App.css";
 import Stats from "./components/Stats";
 import PieChart from "./components/PieChart";
 import { getRuns } from "./api/sauce.api";
@@ -62,34 +62,41 @@ function App() {
 
   return (
     <>
-      <h1>Test Runs Stats</h1>
-      <div className="content">
-        {loading && <div>Loading data...</div>}
+    <div className="relative mx-auto">
+      <h1 className="text-2xl h-12 align-middle text-center bg-blue-900 text-blue-400 font-bold">Test Runs Stats</h1>
+      <div className="h-8 pl-2 align-middle bg-slate-100">
+        {loading && <span>Loading data...</span>}
+        </div>
+      <div className="px-8">
         {tableData?.statuses && (
-          <div className="chart">
+          <div className="w-80 mx-auto">
             <PieChart statuses={tableData.statuses} title="Total runs status" />
           </div>
         )}
 
-        <div className="stats">
-          <form onSubmit={handleSubmit} className="filters">
-            <label htmlFor="quantity">Items to display:</label>
+        <div className="mt-10">
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="quantity" className="mr-2">Items to display:</label>
             <input
               type="number"
               id="quantity"
               value={rowsInput}
               onChange={handleChange}
+              className="input input-bordered input-sm"
             />
-            <button type="submit">Save</button>
+            <button type="submit" className="btn btn-sm ml-2">Save</button>
           </form>
           {tableData?.test_cases && (
-            <div>
+            <div className="mt-4 text-sm">
               Showing {tableData.test_cases.length} of {tableData.total}{" "}
               records.
             </div>
           )}
-          <Stats data={tableData} />
+          <div className="rounded-lg mt-5 relative overflow-x-auto">
+            <Stats data={tableData} />
+          </div>
         </div>
+      </div>
       </div>
     </>
   );

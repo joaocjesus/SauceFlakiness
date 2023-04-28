@@ -1,11 +1,10 @@
+import { Buffer } from 'buffer';
+
 const username = process.env.REACT_APP_SAUCE_USERNAME || '';
 const password = process.env.REACT_APP_SAUCE_KEY || '';
 const org_id = process.env.REACT_APP_SAUCE_ORG_ID || '';
-
-const authString = `${username}:${password}`;
-const encodedAuthString = btoa(authString);
-
-const endpoint = 'http://localhost:3000/api/v2/insights/rdc/test-cases';
+const endpoint = `${process.env.REACT_APP_SAUCE_ENDPOINT}/v2/insights/rdc/test-cases`;
+const encodedAuthString = (Buffer.from(`${username}:${password}`).toString('base64'));
 
 export const getRuns = async () => {
   try {
@@ -17,12 +16,15 @@ export const getRuns = async () => {
 
     url.search = params.toString();
 
+console.log(url);
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
+        "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
       },
-      redirect: 'follow'
+      redirect: 'follow',
     });
 
     if (!response.ok) {

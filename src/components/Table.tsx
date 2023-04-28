@@ -1,5 +1,5 @@
 import React from "react";
-import "./Table.css";
+// import "./Table.css";
 
 interface TableProps {
   data: Array<{ [key: string]: any }>;
@@ -19,16 +19,18 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
   const headers = Object.keys(data[0]);
 
   const renderHeader = () => (
-    <tr>
-      {headers.map((header, index) => (
-        <th key={index}>{formatStr(header)}</th>
-      ))}
-    </tr>
+    <thead className="bg-blue-300 h-10 text-left">
+      <tr>
+        {headers.map((header, index) => (
+          <th key={index} className="text-md">{formatStr(header)}</th>
+        ))}
+      </tr>
+    </thead>
   );
 
   const renderBody = () =>
     data.map((row, rowIndex) => (
-      <tr key={rowIndex}>
+      <tr key={rowIndex} className="odd:bg-gray-50 hover:bg-blue-50">
         {headers.map((header, index) => (
           <td key={index}>{row[header]}</td>
         ))}
@@ -36,7 +38,7 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
     ));
 
   const renderTotals = () => (
-    <tr className="totals">
+    <tr className="bg-blue-100">
       {headers.map((header, index) => (
         <td key={index}>
           {index === 0 && "Totals"}
@@ -49,9 +51,9 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
   );
 
   return (
-    <table className="Table">
+    <table className="w-full table-auto table-compact border-solid border border-blue-300">
+      {renderHeader()}
       <tbody>
-        {renderHeader()}
         {totalsRow === "above" && renderTotals()}
         {renderBody()}
         {totalsRow === "below" && renderTotals()}
