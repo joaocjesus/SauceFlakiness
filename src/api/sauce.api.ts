@@ -22,7 +22,7 @@ export const getRuns = async () => {
 
     const response = await fetch(request, {
       method: 'GET',
-      // mode: 'no-cors',
+      mode: 'no-cors',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
