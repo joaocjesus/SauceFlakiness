@@ -11,6 +11,7 @@ type DataObject = {
 
 const getError = (title: string, result: DataObject): string => {
   const errorMsg = result?.detail || null;
+  log('Error(): ', errorMsg);
   return errorMsg ? `${title}: ${errorMsg}` : `${title}!`;
 }
 
@@ -28,7 +29,7 @@ function App() {
     const testCases = await getTestCases();
     setLoading(false);
 
-    if (testCases) {
+    if (testCases?.test_cases) {
       setRunsResults(testCases);
     } else {
       setError(getError('Error fetching data', testCases));
