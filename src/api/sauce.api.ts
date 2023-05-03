@@ -25,7 +25,7 @@ export const getRuns = async () => {
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
-        'Access-Control-Allow-Origin': '*.pages.dev',
+        'Access-Control-Allow-Origin': 'https://flakiness.pages.dev',
       },
       redirect: 'follow',
     });
