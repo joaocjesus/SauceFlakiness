@@ -1,32 +1,35 @@
 import { Buffer } from 'buffer';
 
-const username = process.env.REACT_APP_SAUCE_USERNAME || '';
-const password = process.env.REACT_APP_SAUCE_KEY || '';
-const org_id = process.env.REACT_APP_SAUCE_ORG_ID || '';
-const endpoint = `${process.env.REACT_APP_SAUCE_ENDPOINT}/v2/insights/rdc/test-cases`;
-const encodedAuthString = (Buffer.from(`${username}:${password}`).toString('base64'));
+const USERNAME = process.env.REACT_APP_SAUCE_USERNAME || '';
+const PASSWORD = process.env.REACT_APP_SAUCE_KEY || '';
+const ORG_ID = process.env.REACT_APP_SAUCE_ORG_ID || '';
+const ENDPOINT = `${process.env.REACT_APP_SAUCE_ENDPOINT}/v2/insights/rdc/test-cases`;
+
+const encodedAuthString = (Buffer.from(`${USERNAME}:${PASSWORD}`).toString('base64'));
+console.log(encodedAuthString);
 
 export const getRuns = async () => {
   try {
-    const url = new URL(endpoint);
+    const request = new URL(ENDPOINT);
     const params = new URLSearchParams({
-      org_id,
+      org_id: ORG_ID,
       limit: '5000',
     });
 
-    url.search = params.toString();
+    request.search = params.toString();
 
-console.log(url);
+    console.log(request);
 
-    const response = await fetch(url, {
+    const response = await fetch(request, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
+        'Access-Control-Allow-Origin': '*.pages.dev',
       },
       redirect: 'follow',
     });
-
+    console.log(response);
     if (!response.ok) {
       throw new Error('Error fetching data');
     }
