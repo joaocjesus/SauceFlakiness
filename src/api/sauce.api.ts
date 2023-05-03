@@ -22,17 +22,16 @@ export const getRuns = async () => {
 
     const response = await fetch(request, {
       method: 'GET',
+      // mode: 'no-cors',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
-        'Access-Control-Allow-Origin': 'https://flakiness.pages.dev',
       },
       redirect: 'follow',
     });
-    console.log(response);
-    if (!response.ok) {
-      throw new Error('Error fetching data');
-    }
+
+    console.log('Response: ', response);
+    
 
     return response.json();
   } catch (err) {

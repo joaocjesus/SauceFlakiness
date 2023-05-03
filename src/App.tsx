@@ -3,19 +3,30 @@ import Stats from "./components/Stats";
 import PieChart from "./components/PieChart";
 import { getRuns } from "./api/sauce.api";
 
+type Error = {
+  errorTitle: string;
+  error: any;
+}
+
 function App() {
   // const [testResults, setTestResults] = useState<Record<string, any>>();
   const [runsResults, setRunsResults] = useState<Record<string, any>>();
   const [tableData, setTableData] = useState<Record<string, any>>();
   const [rowsInput, setRowsInput] = useState<number>(50);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>();
 
   const fetchData = async () => {
+    setError(null);
     setLoading(true);
     const runs = await getRuns();
-    if (runs) {
+    if (runs.ok) {
       setRunsResults(runs);
+    } else {
+      setError({ errorTitle: 'Error fetching data', error: runs.detail });
     }
+    console.log(runs);
+
     setLoading(false);
   };
 
@@ -64,8 +75,9 @@ function App() {
       <h1 className="p-3 text-2xl h-14 align-middle text-center bg-blue-900 text-blue-200 font-bold">
         Test Runs Stats
       </h1>
-      <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm font-bold">
+      <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm">
         {loading && <span>Loading data...</span>}
+        {error && <span className='text-red-500 mt-1 text-sm'>{error?.errorTitle}{error?.error ? `: ${error.error}` : '!'}</span>}
       </div>
       <div className="px-8">
         {tableData?.statuses && (
@@ -86,6 +98,7 @@ function App() {
             />
             <button type="submit" className="btn btn-sm ml-2">Save</button>
           </form>
+
           {tableData?.test_cases && (
             <div className="mt-4 text-sm">
               Showing {tableData.test_cases.length} of {tableData.total}{" "}
