@@ -35,7 +35,7 @@ export const getTestCases = async () => {
 
     const response = await fetch(request, {
       method: 'GET',
-      mode: "no-cors",
+      mode: "cors",
       cache: "no-cache",
       credentials: "include",
       headers: {
