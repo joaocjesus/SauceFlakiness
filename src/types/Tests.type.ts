@@ -5,7 +5,7 @@ export interface Statuses {
   error: number;
 }
 
-export interface TestRun {
+export interface TestCase {
   name: string;
   statuses: Statuses;
   total_runs: number;
@@ -18,4 +18,11 @@ export interface TestResult {
   passed: number;
   failed: number;
   total_runs: number;
+}
+
+export interface TestCases {
+  test_cases: TestCase[];
+  total: number;
+  statuses: Statuses;
+  detail?: string;
 }

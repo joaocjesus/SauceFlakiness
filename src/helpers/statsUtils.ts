@@ -1,12 +1,11 @@
-import { TestRun, TestResult } from "../types/Tests.type";
+import { TestResult, TestCase } from "../types/Tests.type";
 
-function getFailedTests(data: { test_cases: TestRun[] }): TestResult[] {
-  const tests: TestRun[] = data?.test_cases;
-  if (!tests?.length) return [];
+function getFailedTests(data: TestCase[]): TestResult[] {
+  if (!data?.length) return [];
 
   const failureThreshold = 0.05;
 
-  const failingTests = tests
+  const failingTests = data
     .filter((test) => test.fail_rate > failureThreshold)
     .sort((a, b) => b.fail_rate - a.fail_rate)
     .map((test) => ({
