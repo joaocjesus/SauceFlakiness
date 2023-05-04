@@ -7,13 +7,13 @@ import { log } from "./helpers/log";
 type DataObject = {
   detail: string;
   error: string;
-}
+};
 
 const getError = (title: string, result: DataObject): string => {
   const errorMsg = result?.detail || null;
-  log('Error(): ', errorMsg);
+  log("Error(): ", errorMsg);
   return errorMsg ? `${title}: ${errorMsg}` : `${title}!`;
-}
+};
 
 function App() {
   // const [testResults, setTestResults] = useState<Record<string, any>>();
@@ -32,9 +32,9 @@ function App() {
     if (testCases?.test_cases) {
       setRunsResults(testCases);
     } else {
-      setError(getError('Error fetching data', testCases));
+      setError(getError("Error fetching data", testCases));
     }
-    log('Tests Cases: ', testCases);
+    log("Tests Cases: ", testCases);
   };
 
   const filterData = () => {
@@ -84,7 +84,7 @@ function App() {
       </h1>
       <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm">
         {loading && <span>Loading data...</span>}
-        {error && <span className='text-red-500 mt-1 text-sm'>{error}</span>}
+        {error && <span className="text-red-500 mt-1 text-sm">{error}</span>}
       </div>
       <div className="px-8">
         {tableData?.statuses && (
@@ -95,7 +95,9 @@ function App() {
 
         <div className="mt-10">
           <form onSubmit={handleSubmit}>
-            <label htmlFor="quantity" className="mr-2">Items to display:</label>
+            <label htmlFor="quantity" className="mr-2">
+              Items to display:
+            </label>
             <input
               type="number"
               id="quantity"
@@ -103,7 +105,9 @@ function App() {
               onChange={handleChange}
               className="input input-bordered input-sm"
             />
-            <button type="submit" className="btn btn-sm ml-2">Save</button>
+            <button type="submit" className="btn btn-sm ml-2">
+              Save
+            </button>
           </form>
 
           {tableData?.test_cases && (
