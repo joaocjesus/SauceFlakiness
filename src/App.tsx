@@ -3,8 +3,8 @@ import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import { log } from "./helpers/log";
 import FlakinessTrend from "./components/FlakinessTrend";
-import { TestCases, TestResult } from "./types/Tests.type";
-import { getFailedTests } from "./helpers/statsUtils";
+import { TestCase, TestCases, TestResult } from "./types/Tests.type";
+import Tests from "./helpers/Tests";
 import Table from "./components/Table";
 
 const getError = (title: string, result?: TestCases): string => {
@@ -14,30 +14,43 @@ const getError = (title: string, result?: TestCases): string => {
 };
 
 function App() {
-  // const [testResults, setTestResults] = useState<Record<string, any>>();
-  const [testCases, setTestCases] = useState<TestCases>();
-  const [failedTests, setFailedTests] = useState<any>();
+  const [tests, setTests] = useState<Tests>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
+  const [tableData, setTableData] = useState<TestResult[]>();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     setError(null);
     setLoading(true);
     const testCases: TestCases = await getTestCases();
-    setFailedTests(getFailedTests(testCases.test_cases));
     setLoading(false);
 
-    if (testCases?.test_cases) {
-      setTestCases(testCases);
+    if (testCases) {
+      setTests(new Tests(testCases));
     } else {
       setError(getError("Error fetching data", testCases));
     }
-    log("Tests Cases: ", testCases);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const setFilteredTable = (testcases: TestCases) => {
+    if(tests && testcases) {
+      tests.setData(testcases);
+
+    const filteredTable = tests.testResults().map(row => ({
+      name: row.name,
+      passed: Number(row.passed),
+      failed: Number(row.failed),
+      total_runs: Number(row.total_runs)
+    }));
+    log('Filtered Table: ', filteredTable)
+    if (filteredTable)
+      setTableData(filteredTable);
+  }
+  }
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -60,17 +73,25 @@ function App() {
         {error && <span className="text-red-500 mt-1 text-sm">{error}</span>}
       </div>
       <div className="px-8">
-        {testCases?.statuses && (
+        {tests && (
           <div className="w-80 mx-auto">
-            <PieChart statuses={testCases.statuses} title="Total runs status" />
+            <PieChart statuses={tests?.statuses()} title="Total runs status" />
           </div>
         )}
 
         <div className="mt-10">
-          {testCases?.test_cases && <Table data={failedTests} totalsRow="above" />}
+          {tests &&
+            <Table
+              source={tests}
+              dataToRender={tests.failedTests()}
+              totalsRow="above"
+              filterRow={{ key: 'name', label: 'Filter by test name:' }}
+              getTable={setFilteredTable}
+            />
+          }
         </div>
       </div>
-      {testCases && <FlakinessTrend data={testCases} />}
+      {tests && <FlakinessTrend data={tests.testCases()} />}
     </div>
   );
 }

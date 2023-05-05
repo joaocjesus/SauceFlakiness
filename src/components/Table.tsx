@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
+import Tests from "../helpers/Tests";
+import { TestCases } from "../types/Tests.type";
 
 interface TableProps {
-  data: Array<{ [key: string]: any }>;
+  source: Tests;
+  dataToRender: Array<{ [key: string]: any }>;
   totalsRow?: "above" | "below";
-  maxRows?: number;
+  filterRow?: { key: string, label: string };
+  limitRows?: number;
+  rowsLimitInput?: boolean;
+  getTable?: Function;
 }
 
 const formatStr = (str: string) => {
@@ -11,27 +17,34 @@ const formatStr = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
+const Table: React.FC<TableProps> = ({ source, dataToRender, totalsRow = "above", filterRow, limitRows, rowsLimitInput = true, getTable }) => {
   const [rowsInput, setRowsInput] = useState<number>(50);
   const [testNameFilter, setTestNameFilter] = useState<string>('');
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return null;
-  }
-
+  const data = dataToRender;
+  
   useEffect(() => {
     filterData();
-  }, []);
+  }, [testNameFilter]);
 
   const filterData = () => {
-    let filteredData = [...data];
-    if (filteredData) {
+    // Filter rows based on column (filterIndex) value
+    let filteredData = testNameFilter.length > 0 && filterRow
+      ? data.filter((row) => row[filterRow.key].toLowerCase().includes(testNameFilter.toLowerCase()))
+      : [...data];
+
+    if (limitRows) {
+      // Sets amount of rows based on rowsInput
       filteredData = filteredData.slice(0, rowsInput);
-      setTableData(filteredData);
-      setHeaders(Object.keys(filteredData[0]));
     }
+    setTableData(filteredData);
+
+    if (getTable) {
+      const tests = {...source.data(), test_cases: filteredData};
+      getTable(tests);
+    }
+    setHeaders(Object.keys(data[0]));
     return data;
   };
 
@@ -79,7 +92,7 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
         <td key={index}>
           {index === 0 && "Totals"}
           {totalsRow && typeof data[0][header] === "number"
-            ? data.reduce((sum, row) => sum + row[header], 0)
+            ? data.reduce((sum, row) => sum + Number(row[header]), 0)
             : ""}
         </td>
       ))}
@@ -88,7 +101,7 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
 
   return (
     <div className="mt-5">
-      <form onSubmit={handleSubmit}>
+      {rowsLimitInput && <form onSubmit={handleSubmit}>
         <label htmlFor="quantity" className="mr-2">
           Items to display:
         </label>
@@ -102,20 +115,24 @@ const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
         <button type="submit" className="btn btn-sm ml-2">
           Save
         </button>
-      </form>
+      </form>}
       <div className="mt-2 text-xs text-blue-800">
         Showing {rowsInput} of {data.length} rows
       </div>
-      <label htmlFor="test-name" className="mt-2">
-        Filter by test name:
-      </label>
-      <input
-        type="text"
-        id="test-name"
-        value={testNameFilter}
-        onChange={handleFilterChange}
-        className="input input-bordered input-sm ml-2 w-96"
-      />
+      {
+        filterRow && <div className="mt-5">
+          <label htmlFor="test-name">
+            {filterRow.label}
+          </label>
+          <input
+            type="text"
+            id="test-name"
+            value={testNameFilter}
+            onChange={handleFilterChange}
+            className="input input-bordered input-sm ml-2 w-96"
+          />
+        </div>
+      }
       <div className="mt-2 overflow-hidden rounded-lg border border-blue-300">
         <table className="w-full table-compact">
           {renderHeader()}
