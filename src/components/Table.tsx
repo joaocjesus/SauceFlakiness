@@ -13,17 +13,17 @@ const formatStr = (str: string) => {
 
 const Table: React.FC<TableProps> = ({ data, totalsRow = "above" }) => {
   const [rowsInput, setRowsInput] = useState<number>(50);
-  const [testNameFilter, setTestNameFilter] = useState<string>('');
+  const [testNameFilter, setTestNameFilter] = useState<string>("");
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return null;
-  }
 
   useEffect(() => {
     filterData();
   }, []);
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return null;
+  }
 
   const filterData = () => {
     let filteredData = [...data];
