@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
-import { log } from "./helpers/log";
 import FlakinessTrend from "./components/FlakinessTrend";
 import { TestCases, TestResult } from "./types/Tests.type";
 import Tests from "./helpers/Tests";
@@ -9,7 +8,7 @@ import Table from "./components/Table";
 
 const getError = (title: string, result?: TestCases): string => {
   const errorMsg = result?.detail || null;
-  log("Error(): ", errorMsg);
+  Logger.error("Error(): ", errorMsg);
   return errorMsg ? `${title}: ${errorMsg}` : `${title}!`;
 };
 
@@ -20,37 +19,35 @@ function App() {
   const [tableData, setTableData] = useState<TestResult[]>([]);
 
   useEffect(() => {
-    fetchData();
+    (async () => {
+      setError(null);
+      setLoading(true);
+      const testCases: TestCases = await getTestCases();
+      setLoading(false);
+
+      if (testCases) {
+        setTests(new Tests(testCases));
+      } else {
+        setError(getError("Error fetching data", testCases));
+      }
+    })();
   }, []);
 
-  const fetchData = async () => {
-    setError(null);
-    setLoading(true);
-    const testCases: TestCases = await getTestCases();
-    setLoading(false);
-
-    if (testCases) {
-      setTests(new Tests(testCases));
-    } else {
-      setError(getError("Error fetching data", testCases));
-    }
-  };
-
   const setFilteredTable = (testcases: TestCases) => {
-    if (tests && testcases) {
+    Logger.log(tests);
+    if (testcases && tests) {
       tests.setData(testcases);
 
-      const filteredTable = tests.testResults().map(row => ({
+      const filteredTable = tests.testResults().map((row) => ({
         name: row.name,
         passed: Number(row.passed),
         failed: Number(row.failed),
-        total_runs: Number(row.total_runs)
+        total_runs: Number(row.total_runs),
       }));
-      log('Filtered Table: ', filteredTable)
-      if (filteredTable)
-        setTableData(filteredTable);
+      Logger.log(filteredTable);
+      if (filteredTable) setTableData(filteredTable);
     }
-  }
+  };
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -80,15 +77,15 @@ function App() {
         )}
 
         <div className="mt-10">
-          {tests &&
+          {tests && (
             <Table
               source={tests}
               dataToRender={tableData}
               totalsRow="above"
-              filterRow={{ key: 'name', label: 'Filter by test name:' }}
+              filterRow={{ key: "name", label: "Filter by test name:" }}
               getTable={setFilteredTable}
             />
-          }
+          )}
         </div>
       </div>
       {tests && <FlakinessTrend data={tests.testCases()} />}

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { log } from "../helpers/log";
 import Tests from "../helpers/Tests";
 
 interface TableProps {
@@ -31,7 +30,7 @@ const Table: React.FC<TableProps> = ({
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const data = dataToRender;
-  log(data);
+  Logger.log(data);
 
   useEffect(() => {
     filterData();
@@ -58,7 +57,7 @@ const Table: React.FC<TableProps> = ({
       const tests = { ...source.data(), test_cases: filteredData };
       getTable(tests);
     }
-    log(filteredData);
+    Logger.error(filteredData);
 
     if (filteredData.length > 0 && filteredData[0]) {
       setHeaders(Object.keys(filteredData[0]));

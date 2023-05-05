@@ -15,8 +15,8 @@ export interface TestCase {
 export interface Statuses {
   passed: number;
   failed: number;
-  complete: number;
-  error: number;
+  complete?: number;
+  error?: number;
 }
 
 export interface TestResult {
