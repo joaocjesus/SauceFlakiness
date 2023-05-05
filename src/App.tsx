@@ -3,7 +3,7 @@ import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import { log } from "./helpers/log";
 import FlakinessTrend from "./components/FlakinessTrend";
-import { TestCase, TestCases, TestResult } from "./types/Tests.type";
+import { TestCases, TestResult } from "./types/Tests.type";
 import Tests from "./helpers/Tests";
 import Table from "./components/Table";
 
@@ -17,7 +17,7 @@ function App() {
   const [tests, setTests] = useState<Tests>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [tableData, setTableData] = useState<TestResult[]>();
+  const [tableData, setTableData] = useState<TestResult[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -37,19 +37,19 @@ function App() {
   };
 
   const setFilteredTable = (testcases: TestCases) => {
-    if(tests && testcases) {
+    if (tests && testcases) {
       tests.setData(testcases);
 
-    const filteredTable = tests.testResults().map(row => ({
-      name: row.name,
-      passed: Number(row.passed),
-      failed: Number(row.failed),
-      total_runs: Number(row.total_runs)
-    }));
-    log('Filtered Table: ', filteredTable)
-    if (filteredTable)
-      setTableData(filteredTable);
-  }
+      const filteredTable = tests.testResults().map(row => ({
+        name: row.name,
+        passed: Number(row.passed),
+        failed: Number(row.failed),
+        total_runs: Number(row.total_runs)
+      }));
+      log('Filtered Table: ', filteredTable)
+      if (filteredTable)
+        setTableData(filteredTable);
+    }
   }
 
   // useEffect(() => {
@@ -83,7 +83,7 @@ function App() {
           {tests &&
             <Table
               source={tests}
-              dataToRender={tests.failedTests()}
+              dataToRender={tableData}
               totalsRow="above"
               filterRow={{ key: 'name', label: 'Filter by test name:' }}
               getTable={setFilteredTable}

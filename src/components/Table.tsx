@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { log } from "../helpers/log";
 import Tests from "../helpers/Tests";
-import { TestCases } from "../types/Tests.type";
 
 interface TableProps {
   source: Tests;
@@ -23,6 +23,7 @@ const Table: React.FC<TableProps> = ({ source, dataToRender, totalsRow = "above"
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const data = dataToRender;
+
   
   useEffect(() => {
     filterData();
@@ -44,7 +45,8 @@ const Table: React.FC<TableProps> = ({ source, dataToRender, totalsRow = "above"
       const tests = {...source.data(), test_cases: filteredData};
       getTable(tests);
     }
-    setHeaders(Object.keys(data[0]));
+    log(filteredData)
+    setHeaders(Object.keys(filteredData[0]));
     return data;
   };
 
