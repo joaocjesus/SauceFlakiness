@@ -2,20 +2,48 @@ import { useState, useEffect } from "react";
 import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import FlakinessTrend from "./components/FlakinessTrend";
-import { TestCases, TestResult } from "./types/Tests.type";
+import { TestCases, TestCase, Error } from "./types/Tests.type";
 import Tests from "./helpers/Tests";
 import Table from "./components/Table";
 
-const statusError = (title: string, result?: TestCases): string => {
-  const errorMsg = result?.detail || null;
-  return errorMsg ? `${title}: ${errorMsg}` : `${title}!`;
+const statusError = (title: string, result?: TestCases | Error): string => {
+  let error;
+  if (result && "detail" in result) {
+    error = result?.detail;
+  }
+  return error ? `${title}: ${error}` : `${title}!`;
 };
+
+export interface TestResults {
+  name: string;
+  passed?: number;
+  failed?: number;
+  error?: number;
+  complete?: number;
+  total_runs: number;
+}
 
 function App() {
   const [tests, setTests] = useState<Tests>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [tableData, setTableData] = useState<TestResult[]>([]);
+  const [tableData, setTableData] = useState<TestResults[]>([]);
+
+  const setFilteredTable = (testcases: TestCases) => {
+    if (testcases) {
+      const filteredTable = testcases.test_cases.map((row) => ({
+        name: row.name,
+        passed: Number(row.statuses?.passed) || 0,
+        failed: Number(row.statuses?.failed) || 0,
+        error: Number(row.statuses?.error) || 0,
+        complete: Number(row.statuses?.complete) || 0,
+        total_runs: Number(row.total_runs),
+      }));
+      if (filteredTable) {
+        setTableData(filteredTable);
+      }
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -24,29 +52,14 @@ function App() {
       const testCases: TestCases = await getTestCases();
       setLoading(false);
       if (testCases) {
-        setTests(new Tests(testCases));
         setFilteredTable(testCases);
         Logger.warn(testCases);
+        setTests(new Tests(testCases));
       } else {
         setError(statusError("Error fetching data", testCases));
       }
     })();
   }, []);
-
-  const setFilteredTable = (testcases: TestCases) => {
-    if (testcases && tests) {
-      tests.setData(testcases);
-
-      const filteredTable = tests.testResults().map((row) => ({
-        name: row.name,
-        passed: Number(row.passed),
-        failed: Number(row.failed),
-        total_runs: Number(row.total_runs),
-      }));
-      // Logger.log(filteredTable);
-      if (filteredTable) setTableData(filteredTable);
-    }
-  };
 
   // useEffect(() => {
   //   const fetchData = async () => {

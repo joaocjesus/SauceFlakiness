@@ -31,16 +31,6 @@ const Table: React.FC<TableProps> = ({
   const [headers, setHeaders] = useState<string[]>([]);
   const data = dataToRender;
 
-  Logger.log(data);
-
-  useEffect(() => {
-    filterData();
-  }, [testNameFilter]);
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return null;
-  }
-
   const filterData = () => {
     // Filter rows based on column (filterIndex) value
     let filteredData =
@@ -71,6 +61,14 @@ const Table: React.FC<TableProps> = ({
     }
     return data;
   };
+
+  useEffect(() => {
+    filterData();
+  }, [testNameFilter]);
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return null;
+  }
 
   const handleRowsChange = (e: { target: { value: any } }) => {
     const value = e.target.value;

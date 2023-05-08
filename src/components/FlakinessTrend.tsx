@@ -24,7 +24,9 @@ function calculateFlakinessTrend(
       // Calculate the number of relevant runs in the current group.
       const relevantRuns = endIndex - startIndex;
       // Calculate the number of failed runs in the current group, considering the remaining runs.
-      const failedRuns = Math.min(testCase.statuses.failed, relevantRuns);
+      const failedRuns = testCase.statuses.failed
+        ? Math.min(testCase.statuses.failed, relevantRuns)
+        : 0;
 
       // Calculate the flakiness percentage for the current group of X runs.
       const flakinessPercentage = (failedRuns / relevantRuns) * 100;
