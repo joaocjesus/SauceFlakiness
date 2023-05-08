@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import Tests from "../helpers/Tests";
 
 interface TableProps {
-  source: Tests;
-  dataToRender: Array<{ [key: string]: any }>;
+  data: Array<{ [key: string]: any }>;
   totalsRow?: "above" | "below";
   filterRow?: { key: string; label: string };
   limitRows?: number;
   rowsLimitInput?: boolean;
-  getTable?: Function;
+  getTableData?: Function;
 }
 
 const formatStr = (str: string) => {
@@ -16,20 +15,17 @@ const formatStr = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const Table: React.FC<TableProps> = ({
-  source,
-  dataToRender,
+const Table = ({
+  data,
   totalsRow = "above",
   filterRow,
-  limitRows,
   rowsLimitInput = true,
-  getTable,
-}) => {
+  getTableData,
+}: TableProps) => {
   const [rowsInput, setRowsInput] = useState<number>(50);
   const [testNameFilter, setTestNameFilter] = useState<string>("");
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  const data = dataToRender;
 
   const filterData = () => {
     // Filter rows based on column (filterIndex) value
@@ -40,25 +36,21 @@ const Table: React.FC<TableProps> = ({
               .toLowerCase()
               .includes(testNameFilter.toLowerCase())
           )
-        : [...data];
+        : data;
 
-    if (limitRows) {
-      // Sets amount of rows based on rowsInput
-      filteredData = filteredData.slice(0, rowsInput);
-    }
     setTableData(filteredData);
 
-    if (getTable) {
-      const tests = { ...source.data(), test_cases: filteredData };
-      getTable(tests);
+    if (getTableData) {
+      getTableData(tableData);
     }
-    Logger.error(filteredData);
 
-    if (filteredData.length > 0 && filteredData[0]) {
+    if (filteredData.length > 0) {
       setHeaders(Object.keys(filteredData[0]));
     } else {
       setHeaders([]);
     }
+
+    Logger.log("Headers: ", headers);
     return data;
   };
 
@@ -123,48 +115,54 @@ const Table: React.FC<TableProps> = ({
 
   return (
     <div className="mt-5">
-      {rowsLimitInput && (
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="quantity" className="mr-2">
-            Items to display:
-          </label>
-          <input
-            type="number"
-            id="quantity"
-            value={rowsInput}
-            onChange={handleRowsChange}
-            className="input input-bordered input-sm"
-          />
-          <button type="submit" className="btn btn-sm ml-2">
-            Save
-          </button>
-        </form>
+      {data && (
+        <>
+          {rowsLimitInput && (
+            <div>
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="quantity" className="mr-2">
+                  Items to display:
+                </label>
+                <input
+                  type="number"
+                  id="quantity"
+                  value={rowsInput}
+                  onChange={handleRowsChange}
+                  className="input input-bordered input-sm"
+                />
+                <button type="submit" className="btn btn-sm ml-2">
+                  Save
+                </button>
+              </form>
+              <div className="mt-2 text-xs text-blue-800">
+                Showing {rowsInput} of {data.length} rows
+              </div>
+            </div>
+          )}
+          {filterRow && (
+            <div className="mt-5">
+              <label htmlFor="test-name">{filterRow.label}</label>
+              <input
+                type="text"
+                id="test-name"
+                value={testNameFilter}
+                onChange={handleFilterChange}
+                className="input input-bordered input-sm ml-2 w-96"
+              />
+            </div>
+          )}
+          <div className="mt-2 overflow-hidden rounded-lg border border-blue-300">
+            <table className="w-full table-compact">
+              {renderHeader()}
+              <tbody>
+                {totalsRow === "above" && renderTotals()}
+                {renderBody()}
+                {totalsRow === "below" && renderTotals()}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-      <div className="mt-2 text-xs text-blue-800">
-        Showing {rowsInput} of {data.length} rows
-      </div>
-      {filterRow && (
-        <div className="mt-5">
-          <label htmlFor="test-name">{filterRow.label}</label>
-          <input
-            type="text"
-            id="test-name"
-            value={testNameFilter}
-            onChange={handleFilterChange}
-            className="input input-bordered input-sm ml-2 w-96"
-          />
-        </div>
-      )}
-      <div className="mt-2 overflow-hidden rounded-lg border border-blue-300">
-        <table className="w-full table-compact">
-          {renderHeader()}
-          <tbody>
-            {totalsRow === "above" && renderTotals()}
-            {renderBody()}
-            {totalsRow === "below" && renderTotals()}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };

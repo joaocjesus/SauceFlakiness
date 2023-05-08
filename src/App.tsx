@@ -3,7 +3,6 @@ import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import FlakinessTrend from "./components/FlakinessTrend";
 import { TestCases, TestCase, Error } from "./types/Tests.type";
-import Tests from "./helpers/Tests";
 import Table from "./components/Table";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
@@ -24,24 +23,15 @@ export interface TestResults {
 }
 
 function App() {
-  const [tests, setTests] = useState<Tests>();
+  const [tests, setTests] = useState<TestCases>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [tableData, setTableData] = useState<TestResults[]>([]);
+  const [testData, setTestData] = useState<TestResults[]>([]);
 
-  const setFilteredTable = (testcases: TestCases) => {
+  const setFilteredData = (testcases: TestResults[]) => {
+    Logger.log("Testcases: ", testcases);
     if (testcases) {
-      const filteredTable = testcases.test_cases.map((row) => ({
-        name: row.name,
-        passed: Number(row.statuses?.passed) || 0,
-        failed: Number(row.statuses?.failed) || 0,
-        error: Number(row.statuses?.error) || 0,
-        complete: Number(row.statuses?.complete) || 0,
-        total_runs: Number(row.total_runs),
-      }));
-      if (filteredTable) {
-        setTableData(filteredTable);
-      }
+      setTestData(testcases);
     }
   };
 
@@ -51,10 +41,20 @@ function App() {
       setLoading(true);
       const testCases: TestCases = await getTestCases();
       setLoading(false);
-      if (testCases) {
-        setFilteredTable(testCases);
-        Logger.warn(testCases);
-        setTests(new Tests(testCases));
+      if (testCases?.test_cases) {
+        const filteredTable = testCases.test_cases.map((row) => ({
+          name: row.name,
+          passed: Number(row.statuses?.passed) || 0,
+          failed: Number(row.statuses?.failed) || 0,
+          error: Number(row.statuses?.error) || 0,
+          complete: Number(row.statuses?.complete) || 0,
+          total_runs: Number(row.total_runs),
+        }));
+        if (filteredTable) {
+          Logger.log("Filtered: ", filteredTable);
+          setTestData(filteredTable);
+        }
+        setTests(testCases);
       } else {
         setError(statusError("Error fetching data", testCases));
       }
@@ -84,23 +84,22 @@ function App() {
       <div className="px-8">
         {tests && (
           <div className="w-80 mx-auto">
-            <PieChart statuses={tests?.statuses()} title="Total runs status" />
+            <PieChart statuses={tests?.statuses} title="Total runs status" />
           </div>
         )}
 
         <div className="mt-10">
-          {tests && (
+          {testData && (
             <Table
-              source={tests}
-              dataToRender={tableData}
+              data={testData}
               totalsRow="above"
               filterRow={{ key: "name", label: "Filter by test name:" }}
-              getTable={setFilteredTable}
+              getTableData={setFilteredData}
             />
           )}
         </div>
       </div>
-      {tests && <FlakinessTrend data={tests.testCases()} />}
+      {tests && <FlakinessTrend data={tests.test_cases} />}
     </div>
   );
 }
