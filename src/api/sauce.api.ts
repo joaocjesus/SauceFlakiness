@@ -1,6 +1,5 @@
 import { Buffer } from 'buffer';
 import { throwErrorIfAnyEmpty } from '../helpers/helpers';
-import { log } from '../helpers/log';
 
 const {
   REACT_APP_USERNAME: USERNAME,
@@ -27,11 +26,11 @@ export const getTestCases = async () => {
 
     request.search = params.toString();
 
-    if(API_ENV === 'LOCAL') {
+    if (API_ENV === 'LOCAL') {
       return require('./testcases.json');
     }
 
-    log('Request: ', request)
+    Logger.log('Request: ', request)
 
     const response = await fetch(request, {
       method: 'GET',
@@ -45,9 +44,9 @@ export const getTestCases = async () => {
       redirect: 'follow',
     });
 
-    log('Response: ', response);
+    Logger.log('Response: ', response);
     return response.json();
   } catch (err) {
-    log(err);
+    Logger.error(err);
   }
 };
