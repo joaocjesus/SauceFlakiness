@@ -15,7 +15,7 @@ const getCaller = () => {
 
 type MessageType = 'log' | 'warn' | 'error';
 
-function logMsg(type: MessageType = 'log', ...args: any[]): void {
+function logMsg(type: MessageType = 'log', args: any): void {
   if (process.env.REACT_APP_DEBUG?.toLowerCase() !== 'true') return;
   const prefix = getCaller()[0];
 
@@ -33,8 +33,8 @@ function logMsg(type: MessageType = 'log', ...args: any[]): void {
   }
 }
 
-const log = (args: any) => {
-  logMsg(args);
+const log = (...args: any) => {
+  logMsg('log', args);
 }
 
 const error = (...args: any) => {
