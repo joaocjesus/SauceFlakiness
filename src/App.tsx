@@ -6,9 +6,8 @@ import { TestCases, TestResult } from "./types/Tests.type";
 import Tests from "./helpers/Tests";
 import Table from "./components/Table";
 
-const getError = (title: string, result?: TestCases): string => {
+const statusError = (title: string, result?: TestCases): string => {
   const errorMsg = result?.detail || null;
-  Logger.error("Error(): ", errorMsg);
   return errorMsg ? `${title}: ${errorMsg}` : `${title}!`;
 };
 
@@ -24,17 +23,17 @@ function App() {
       setLoading(true);
       const testCases: TestCases = await getTestCases();
       setLoading(false);
-
       if (testCases) {
         setTests(new Tests(testCases));
+        setFilteredTable(testCases);
+        Logger.warn(testCases);
       } else {
-        setError(getError("Error fetching data", testCases));
+        setError(statusError("Error fetching data", testCases));
       }
     })();
   }, []);
 
   const setFilteredTable = (testcases: TestCases) => {
-    Logger.log(tests);
     if (testcases && tests) {
       tests.setData(testcases);
 
@@ -44,7 +43,7 @@ function App() {
         failed: Number(row.failed),
         total_runs: Number(row.total_runs),
       }));
-      Logger.log(filteredTable);
+      // Logger.log(filteredTable);
       if (filteredTable) setTableData(filteredTable);
     }
   };

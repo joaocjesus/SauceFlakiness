@@ -1,43 +1,58 @@
 import './CustomGlobal';
 
-const log = (...args: any) => {
-    if (process.env.REACT_APP_DEBUG?.toLowerCase() === 'true') {
-        console.log(`(${getCallerFunctionName()})`, ...args);
-    }
+const getCaller = () => {
+  const error = new Error();
+  const stackLines = error.stack?.split('\n');
+  const parentFunctionInfo = stackLines ? stackLines[4] : '';
+
+  const functionNameRegex = /at (\S+)/;
+
+  const parentFunctionNameMatch = functionNameRegex.exec(parentFunctionInfo);
+  const parent = parentFunctionNameMatch ? parentFunctionNameMatch[1] : 'unknown';
+
+  return [parent, stackLines];
+}
+
+type MessageType = 'log' | 'warn' | 'error';
+
+function logMsg(type: MessageType = 'log', ...args: any[]): void {
+  if (process.env.REACT_APP_DEBUG?.toLowerCase() !== 'true') return;
+  const prefix = getCaller()[0];
+
+  switch (type) {
+    case 'warn':
+      console.warn(prefix, ...args);
+      break;
+    case 'error':
+      console.error(prefix, ...args);
+      break;
+    case 'log':
+    default:
+      console.log(prefix, ...args);
+      break;
+  }
+}
+
+const log = (args: any) => {
+  logMsg(args);
 }
 
 const error = (...args: any) => {
-    if (process.env.REACT_APP_DEBUG?.toLowerCase() === 'true') {
-        console.log(`(${getCallerFunctionName()}) %cError:`, 'color: red; font-weight: bold;', ...args);
-
-    }
+  logMsg('error', args);
 }
 
-const getCallerFunctionName = () => {
-    const error = new Error();
-    const stackLines = error.stack?.split('\n');
-    const callerInfo = stackLines ? stackLines[3] : '';
-
-    const functionNameRegex = /at (\S+)/;
-    const functionNameMatch = functionNameRegex.exec(callerInfo);
-    const functionName = functionNameMatch ? functionNameMatch[1] : 'unknown';
-
-    return functionName;
+const warn = (...args: any) => {
+  logMsg('warn', args);
 }
 
 const logger = {
-    log,
-    error,
+  log,
+  error,
+  warn,
 };
 
 if (typeof window !== 'undefined') {
-    (window as any).Logger = logger;
+  (window as any).Logger = logger;
 } else if (typeof global !== 'undefined') {
-    (global as any).Logger = logger;
+  (global as any).Logger = logger;
 }
-
-
-
-
-
-

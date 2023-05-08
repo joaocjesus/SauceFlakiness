@@ -30,8 +30,8 @@ const Table: React.FC<TableProps> = ({
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const data = dataToRender;
-  Logger.log(data);
 
+  Logger.log(data);
   useEffect(() => {
     filterData();
   }, [testNameFilter]);
