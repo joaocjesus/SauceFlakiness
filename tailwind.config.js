@@ -5,12 +5,14 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts,tsx}",
   ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+  daisyui: {
+    themes: [
+      {
+        default: {
+          "primary": 'rgb(30 58 138)',
+        },
       },
-    },
+    ],
   },
   plugins: [require("daisyui")],
 }
