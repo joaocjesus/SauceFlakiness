@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Tests from "../helpers/Tests";
+import { useEffect, useState } from "react";
 
 interface TableProps {
   data: Array<{ [key: string]: any }>;
   totalsRow?: "above" | "below";
   filterRow?: { key: string; label: string };
-  limitRows?: number;
-  rowsLimitInput?: boolean;
   getTableData?: Function;
+  columnFormat?: [
+    {
+      name?: string;
+      index?: number;
+      style: string;
+    }
+  ];
 }
 
 const formatStr = (str: string) => {
@@ -19,54 +23,40 @@ const Table = ({
   data,
   totalsRow = "above",
   filterRow,
-  rowsLimitInput = true,
   getTableData,
+  columnFormat,
 }: TableProps) => {
-  const [rowsInput, setRowsInput] = useState<number>(50);
   const [testNameFilter, setTestNameFilter] = useState<string>("");
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
 
-  const filterData = () => {
+  const filterData = (filter: string) => {
     // Filter rows based on column (filterIndex) value
-    let filteredData =
-      testNameFilter.length > 0 && filterRow
-        ? data.filter((row) =>
-            row[filterRow.key]
-              .toLowerCase()
-              .includes(testNameFilter.toLowerCase())
-          )
-        : data;
+    let filteredData = filterRow
+      ? data.filter((row) =>
+          row[filterRow.key].toLowerCase().includes(filter.toLowerCase())
+        )
+      : data;
 
     setTableData(filteredData);
 
     if (getTableData) {
       getTableData(tableData);
     }
-
-    if (filteredData.length > 0) {
-      setHeaders(Object.keys(filteredData[0]));
-    } else {
-      setHeaders([]);
-    }
-
-    return data;
   };
 
   useEffect(() => {
-    filterData();
+    setHeaders(Object.keys(data[0]));
+  }, []);
+
+  useEffect(() => {
+    const filterUpdate = setTimeout(() => filterData(testNameFilter), 500);
+    return () => clearTimeout(filterUpdate);
   }, [testNameFilter]);
 
   if (!Array.isArray(data) || data.length === 0) {
     return null;
   }
-
-  const handleRowsChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    if (!Number.isNaN(value)) {
-      setRowsInput(value);
-    }
-  };
 
   const handleFilterChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
@@ -74,30 +64,6 @@ const Table = ({
       setTestNameFilter(value);
     }
   };
-
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    filterData();
-  };
-
-  const renderHeader = () => (
-    <thead className="bg-blue-300 h-10 text-left">
-      <tr>
-        {headers.map((header, index) => (
-          <th key={index}>{formatStr(header)}</th>
-        ))}
-      </tr>
-    </thead>
-  );
-
-  const renderBody = () =>
-    tableData.map((row: any, rowIndex: number) => (
-      <tr key={rowIndex} className="odd:bg-gray-50 hover:bg-blue-50">
-        {headers.map((header, index) => (
-          <td key={index}>{row[header]}</td>
-        ))}
-      </tr>
-    ));
 
   const renderTotals = () => (
     <tr className="bg-blue-100">
@@ -112,32 +78,19 @@ const Table = ({
     </tr>
   );
 
+  const getColumnStyle = (header: string, colIndex: number): string => {
+    if (!columnFormat) return "";
+    // Finds column by name or index if passed via columnFormat
+    const column = columnFormat.find(({ index, name }) =>
+      name ? name.toLowerCase() === header : index === colIndex
+    );
+    return column?.style || "";
+  };
+
   return (
     <div className="mt-5">
-      {data && (
+      {tableData && (
         <>
-          {rowsLimitInput && (
-            <div>
-              <form onSubmit={handleSubmit}>
-                <label htmlFor="quantity" className="mr-2">
-                  Items to display:
-                </label>
-                <input
-                  type="number"
-                  id="quantity"
-                  value={rowsInput}
-                  onChange={handleRowsChange}
-                  className="input input-bordered input-sm"
-                />
-                <button type="submit" className="btn btn-sm ml-2">
-                  Save
-                </button>
-              </form>
-              <div className="mt-2 text-xs text-blue-800">
-                Showing {rowsInput} of {data.length} rows
-              </div>
-            </div>
-          )}
           {filterRow && (
             <div className="mt-5">
               <label htmlFor="test-name">{filterRow.label}</label>
@@ -152,10 +105,27 @@ const Table = ({
           )}
           <div className="mt-2 overflow-hidden rounded-lg border border-blue-300">
             <table className="w-full table-compact">
-              {renderHeader()}
+              <thead className="bg-blue-300 h-10 text-left">
+                <tr>
+                  {headers.map((header, index) => (
+                    <th key={index} className={getColumnStyle(header, index)}>
+                      {formatStr(header)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
               <tbody>
                 {totalsRow === "above" && renderTotals()}
-                {renderBody()}
+                {tableData.map((row: any, rowIndex: number) => (
+                  <tr
+                    key={`row-${rowIndex}`}
+                    className="odd:bg-gray-50 hover:bg-blue-50"
+                  >
+                    {headers.map((header, index) => (
+                      <td key={`row-${rowIndex}-${index}`}>{row[header]}</td>
+                    ))}
+                  </tr>
+                ))}
                 {totalsRow === "below" && renderTotals()}
               </tbody>
             </table>
