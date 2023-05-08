@@ -6,7 +6,7 @@ class Tests {
   private failureThreshold = 0.05;
 
   constructor(data: TestCases) {
-    this.source = data;
+    this.source = { ...data };
     this.testCasesResults = this.getResults();
   }
 
