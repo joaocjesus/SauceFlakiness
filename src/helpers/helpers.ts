@@ -2,30 +2,30 @@ type Obj = { [key: string]: any };
 
 interface SortProps {
     array: Obj[];
-    columnName: string;
-    sortOrder?: 'asc' | 'desc';
+    column: string;
+    order?: 'asc' | 'desc';
 }
 
-export const sortArray = ({ array, columnName, sortOrder = 'asc' }: SortProps): Obj[] => {
+export const sortArray = ({ array, column, order = 'asc' }: SortProps): Obj[] => {
     // Determine the data type of the specified column
-    const dataType = typeof array[0][columnName];
+    const dataType = typeof array[0][column];
 
     return array.sort((a, b) => {
         if (dataType === 'number') {
-            return sortOrder === 'asc'
-                ? a[columnName] - b[columnName]
-                : b[columnName] - a[columnName];
+            return order === 'asc'
+                ? a[column] - b[column]
+                : b[column] - a[column];
         } else if (dataType === 'string') {
-            const comparison = sortOrder === 'asc' ? 1 : -1;
-            if (a[columnName] < b[columnName]) {
+            const comparison = order === 'asc' ? 1 : -1;
+            if (a[column] < b[column]) {
                 return -1 * comparison;
             }
-            if (a[columnName] > b[columnName]) {
+            if (a[column] > b[column]) {
                 return 1 * comparison;
             }
             return 0;
         } else {
-            throw new Error(`Unsupported data type for column "${columnName}": ${dataType}`);
+            throw new Error(`Unsupported data type for column "${column}": ${dataType}`);
         }
     });
 }

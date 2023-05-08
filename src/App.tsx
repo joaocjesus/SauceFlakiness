@@ -51,7 +51,6 @@ function App() {
         total_runs: Number(row.total_runs),
       }));
       if (filteredTable) {
-        Logger.log("Filtered: ", filteredTable);
         setTestData(filteredTable);
       }
       setTests(testCases);
@@ -76,6 +75,8 @@ function App() {
 
   //   fetchData();
   // }, []);
+
+  const tableStyles = [{ name: "Name", style: "w-4/6" }];
 
   return (
     <div className="relative mx-auto">
@@ -105,14 +106,15 @@ function App() {
               {testData && (
                 <Table
                   data={testData}
-                  sort={{ column: "name", type: "asc" }}
+                  title="Test Results"
+                  // sort={{ column: "name", order: Order.ASC }}
                   totalsRow="above"
                   filter={{
                     column: "name",
                     inputLabel: "Filter by test name:",
                   }}
                   getTableData={setFilteredData}
-                  columnFormat={[{ name: "Name", style: "w-4/6" }]}
+                  headerStyle={tableStyles}
                 />
               )}
             </div>
