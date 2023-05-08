@@ -105,8 +105,12 @@ function App() {
               {testData && (
                 <Table
                   data={testData}
+                  sort={{ column: "name", type: "asc" }}
                   totalsRow="above"
-                  filterRow={{ key: "name", label: "Filter by test name:" }}
+                  filter={{
+                    column: "name",
+                    inputLabel: "Filter by test name:",
+                  }}
                   getTableData={setFilteredData}
                   columnFormat={[{ name: "Name", style: "w-4/6" }]}
                 />

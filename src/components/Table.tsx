@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import { sortArray } from "../helpers/helpers";
 
 interface TableProps {
   data: Array<{ [key: string]: any }>;
+  sort?: {
+    column: string;
+    type?: "asc" | "desc";
+  };
   totalsRow?: "above" | "below";
-  filterRow?: { key: string; label: string };
+  filter?: { column: string; inputLabel: string };
   getTableData?: Function;
   columnFormat?: [
     {
@@ -21,8 +26,9 @@ const formatStr = (str: string) => {
 
 const Table = ({
   data,
+  sort,
   totalsRow = "above",
-  filterRow,
+  filter,
   getTableData,
   columnFormat,
 }: TableProps) => {
@@ -30,13 +36,22 @@ const Table = ({
   const [tableData, setTableData] = useState<{ [key: string]: any }>([]);
   const [headers, setHeaders] = useState<string[]>([]);
 
-  const filterData = (filter: string) => {
-    // Filter rows based on column (filterIndex) value
-    let filteredData = filterRow
-      ? data.filter((row) =>
-          row[filterRow.key].toLowerCase().includes(filter.toLowerCase())
-        )
+  const filterData = (filterBy: string) => {
+    // Sort data if <sort> parameter was specified
+    let sourceData = sort
+      ? sortArray({
+          array: data,
+          columnName: sort?.column,
+          sortOrder: sort?.type,
+        })
       : data;
+
+    // Filter rows based on column value, if <filter> parameter was specified
+    let filteredData = filter
+      ? sourceData.filter((row) =>
+          row[filter.column].toLowerCase().includes(filterBy.toLowerCase())
+        )
+      : sourceData;
 
     setTableData(filteredData);
 
@@ -91,9 +106,9 @@ const Table = ({
     <div className="mt-5">
       {tableData && (
         <>
-          {filterRow && (
+          {filter && (
             <div className="mt-5">
-              <label htmlFor="test-name">{filterRow.label}</label>
+              <label htmlFor="test-name">{filter.inputLabel}</label>
               <input
                 type="text"
                 id="test-name"
