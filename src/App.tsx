@@ -26,13 +26,10 @@ function App() {
   const [tests, setTests] = useState<TestCases>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [testData, setTestData] = useState<TestResults[]>([]);
+  const [testData, setTestData] = useState<TestResults[]>();
 
-  const setFilteredData = (testcases: TestResults[]) => {
-    Logger.log("Testcases: ", testcases);
-    if (testcases) {
-      setTestData(testcases);
-    }
+  const setFilteredData = (results: TestResults[]) => {
+    Logger.log("Results: ", results);
   };
 
   useEffect(() => {

@@ -50,7 +50,6 @@ const Table = ({
       setHeaders([]);
     }
 
-    Logger.log("Headers: ", headers);
     return data;
   };
 
