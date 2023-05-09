@@ -34,7 +34,6 @@ function App() {
   const getTableResults = (tableResults: TestResults[]) => {
     const results = tableResults?.map(result => result.name);
     const filteredTests = sourceData?.filter(({ name }) => results?.includes(name));
-    Logger.log('filteredTests: ', filteredTests);
     if (filteredTests) {
       setFlakinessData(filteredTests);
     }
