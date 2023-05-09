@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { sortArray } from "../helpers/helpers";
 
-enum Order {
+export enum Order {
   ASC = "asc",
   DESC = "desc",
 }
@@ -49,41 +49,60 @@ const Table = ({
   const [testNameFilter, setTestNameFilter] = useState<string>("");
   const [tableData, setTableData] = useState<ArrayOfObjects>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [columnSort, setColumnSort] = useState<SortProps>(
-    sort || defaultSort()
-  );
-
-  const filterData = (filterBy: string) => {
-    let sourceData = [...data];
-
-    if (filterBy && filter) {
-      // Filter rows based on column value, if <filter> parameter was specified
-      sourceData = filter
-        ? sourceData.filter((row) =>
-            row[filter.column].toLowerCase().includes(filterBy.toLowerCase())
-          )
-        : sourceData;
-    }
-
-    setTableData(sourceData);
-
-    if (getTableData) {
-      getTableData(tableData);
-    }
-  };
+  const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
 
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
+
+    const sortedData = sortData(data);
+    setTableData(sortedData || data);
   }, []);
 
   useEffect(() => {
-    const filterUpdate = setTimeout(() => filterData(testNameFilter), 500);
-    return () => clearTimeout(filterUpdate);
+    const sortedData = sortData(data);
+    setTableData(sortedData || data);
+  }, [columnSort]);
+
+  useEffect(() => {
+    if (getTableData) {
+      getTableData(tableData);
+    }
+  }, [tableData]);
+
+  useEffect(() => {
+    if (testNameFilter) {
+      const filterUpdate = setTimeout(() => filterData(), 500);
+      return () => clearTimeout(filterUpdate);
+    }
   }, [testNameFilter]);
 
-  if (!Array.isArray(data) || data.length === 0) {
-    return null;
-  }
+  const filterData = () => {
+    const sourceData = tableData?.length > 0 ? [...tableData] : [...data];
+
+    // Filter rows based on column value, if <filter> parameter was specified
+    const filtered = filter
+      ? [...sourceData].filter((row) =>
+          row[filter.column]
+            .toLowerCase()
+            .includes(testNameFilter.toLowerCase())
+        )
+      : sourceData;
+
+    setTableData(filtered);
+  };
+
+  const sortData = (sourceData: ArrayOfObjects) => {
+    let { column, order } = columnSort;
+
+    // Sort data if <sort> parameter was specified
+    const sortedData = sortArray({
+      column,
+      order,
+      array: sourceData,
+    });
+
+    return sortedData;
+  };
 
   const getIcon = (order: Order) => {
     switch (order) {
@@ -91,13 +110,6 @@ const Table = ({
         return SORT_ASC_ICON;
       case Order.DESC:
         return SORT_DESC_ICON;
-    }
-  };
-
-  const handleFilterChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    if (!Number.isNaN(value)) {
-      setTestNameFilter(value);
     }
   };
 
@@ -128,32 +140,6 @@ const Table = ({
     return `${sortIcon} ${newHeader}`;
   };
 
-  const sortData = () => {
-    let { column, order } = columnSort;
-
-    // Sort data if <sort> parameter was specified
-    const sortedData = sortArray({
-      column,
-      order,
-      array: tableData,
-    });
-
-    setTableData(sortedData);
-  };
-
-  const handleColumnClick = (header: string) => {
-    switch (columnSort?.order) {
-      case Order.ASC:
-        setColumnSort({ column: header, order: Order.DESC });
-        break;
-      case Order.DESC:
-        setColumnSort({ column: header, order: Order.ASC });
-        break;
-    }
-
-    sortData();
-  };
-
   const getStyle = (header: string, colIndex: number): string => {
     if (!headerStyle) return "";
 
@@ -167,10 +153,22 @@ const Table = ({
     return column?.style || "";
   };
 
+  const handleColumnClick = (header: string) => {
+    const newOrder = columnSort.order === Order.ASC ? Order.DESC : Order.ASC;
+    setColumnSort({ column: header, order: newOrder });
+  };
+
+  const handleFilterChange = (e: { target: { value: any } }) => {
+    const value = e.target.value;
+    if (!Number.isNaN(value)) {
+      setTestNameFilter(value);
+    }
+  };
+
   return (
     <div className="mt-5 border border-blue-200 rounded-lg p-3">
       {title && (
-        <div className="text-center text-primary font-bold text-xl">
+        <div className="text-center text-primary font-bold text-2xl">
           {title}
         </div>
       )}
@@ -184,8 +182,15 @@ const Table = ({
                 id="test-name"
                 value={testNameFilter}
                 onChange={handleFilterChange}
-                className="input input-bordered input-sm ml-2 w-96"
+                className="input input-bordered border-secondary focus:border-primary input-sm ml-2 w-96"
               />
+              <div className="h-6">
+                {testNameFilter.length > 0 && tableData.length === 0 && (
+                  <span className="text-sm text-error">
+                    No data found! Maybe try changing the filter.
+                  </span>
+                )}
+              </div>
             </div>
           )}
           <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px]">

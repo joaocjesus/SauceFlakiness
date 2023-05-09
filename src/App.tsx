@@ -3,7 +3,7 @@ import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import FlakinessTrend from "./components/FlakinessTrend";
 import { TestCases, TestCase, Error } from "./types/Tests.type";
-import Table from "./components/Table";
+import Table, { Order } from "./components/Table";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -81,7 +81,7 @@ function App() {
   return (
     <div className="relative mx-auto">
       <h1 className="p-3 text-2xl h-14 align-middle text-center bg-primary text-white font-bold">
-        Test Runs Stats
+        SauceLabs Stats
       </h1>
       <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm">
         {loading && <span className="text-primary">Loading data...</span>}
@@ -107,7 +107,7 @@ function App() {
                 <Table
                   data={testData}
                   title="Test Results"
-                  // sort={{ column: "name", order: Order.ASC }}
+                  sort={{ column: "failed", order: Order.DESC }}
                   totalsRow="above"
                   filter={{
                     column: "name",
