@@ -113,10 +113,10 @@ const Table = ({
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = filter
       ? [...sourceData].filter((row) =>
-          row[filter.column]
-            .toLowerCase()
-            .includes(testNameFilter.toLowerCase())
-        )
+        row[filter.column]
+          .toLowerCase()
+          .includes(testNameFilter.toLowerCase())
+      )
       : sourceData;
 
     setTableData(filtered);
@@ -135,12 +135,14 @@ const Table = ({
     return sortedData;
   };
 
-  const getIcon = (order: Order) => {
-    switch (order) {
-      case Order.ASC:
-        return SORT_ASC_ICON;
-      case Order.DESC:
-        return SORT_DESC_ICON;
+  const getSortIcon = (header: string) => {
+    if (isSortedHeader(header)) {
+      switch (columnSort?.order) {
+        case Order.ASC:
+          return SORT_ASC_ICON;
+        case Order.DESC:
+          return SORT_DESC_ICON;
+      }
     }
   };
 
@@ -148,19 +150,9 @@ const Table = ({
     columnSort?.column?.toLowerCase() === header?.toLowerCase();
 
   const formattedHeader = (header: string) => {
-    let sortIcon = <></>;
-    if (isSortedHeader(header)) {
-      sortIcon = getIcon(columnSort.order);
-    }
-
     const normalized = header.replaceAll(/[_-]/g, " ");
     const newHeader = normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    return (
-      <>
-        <span className="float-right absolute">{sortIcon}</span>
-        <span>{` ${newHeader}`}</span>
-      </>
-    );
+    return newHeader;
   };
 
   const getStyle = (header: string, colIndex: number): string => {
@@ -240,7 +232,10 @@ const Table = ({
                       className={"cursor-pointer " + getStyle(header, index)}
                       onClick={() => handleColumnClick(header)}
                     >
-                      {formattedHeader(header)}
+                      <span className="flex items-center">
+                        {formattedHeader(header)}
+                        <span className="ml-1 w-1">{getSortIcon(header)}</span>
+                      </span>
                     </th>
                   ))}
                 </tr>
