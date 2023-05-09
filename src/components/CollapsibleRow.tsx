@@ -20,7 +20,7 @@ const CollapsibleRow: React.FC<CollapsibleRowProps> = ({
   };
 
   return (
-    <div className={`${classes}`}>
+    <div className={classes}>
       <button
         onClick={handleToggle}
         className={`btn btn-sm w-full ${

@@ -6,8 +6,39 @@ export enum Order {
   DESC = "desc",
 }
 
-const SORT_ASC_ICON = "⌃";
-const SORT_DESC_ICON = "v";
+const SORT_ASC_ICON = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width={1.5}
+    stroke="currentColor"
+    className="w-4 h-4"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M4.5 15.75l7.5-7.5 7.5 7.5"
+    />
+  </svg>
+);
+
+const SORT_DESC_ICON = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-4 h-4"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+    />
+  </svg>
+);
 
 type ArrayOfObjects = Array<{ [key: string]: any }>;
 
@@ -113,31 +144,23 @@ const Table = ({
     }
   };
 
-  const renderTotals = () => (
-    <tr className="bg-blue-100">
-      {headers.map((header, index) => (
-        <td key={index}>
-          {index === 0 && "Totals"}
-          {totalsRow && typeof data[0][header] === "number"
-            ? data.reduce((sum, row) => sum + Number(row[header]), 0)
-            : ""}
-        </td>
-      ))}
-    </tr>
-  );
-
   const isSortedHeader = (header: string) =>
     columnSort?.column?.toLowerCase() === header?.toLowerCase();
 
   const formattedHeader = (header: string) => {
-    let sortIcon = "";
+    let sortIcon = <></>;
     if (isSortedHeader(header)) {
       sortIcon = getIcon(columnSort.order);
     }
 
     const normalized = header.replaceAll(/[_-]/g, " ");
     const newHeader = normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    return `${sortIcon} ${newHeader}`;
+    return (
+      <>
+        <span className="float-right absolute">{sortIcon}</span>
+        <span>{` ${newHeader}`}</span>
+      </>
+    );
   };
 
   const getStyle = (header: string, colIndex: number): string => {
@@ -152,6 +175,19 @@ const Table = ({
 
     return column?.style || "";
   };
+
+  const renderTotals = () => (
+    <tr className="bg-accent">
+      {headers.map((header, index) => (
+        <td key={index}>
+          {index === 0 && "Totals"}
+          {totalsRow && typeof data[0][header] === "number"
+            ? data.reduce((sum, row) => sum + Number(row[header]), 0)
+            : ""}
+        </td>
+      ))}
+    </tr>
+  );
 
   const handleColumnClick = (header: string) => {
     const newOrder = columnSort.order === Order.ASC ? Order.DESC : Order.ASC;
@@ -193,9 +229,9 @@ const Table = ({
               </div>
             </div>
           )}
-          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px]">
+          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px] min-h-[200px]">
             <table className="w-full table-compact">
-              <thead className="bg-blue-300 h-10 text-left sticky top-0">
+              <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
                   {headers.map((header, index) => (
                     <th
@@ -214,7 +250,7 @@ const Table = ({
                 {tableData.map((row: any, rowIndex: number) => (
                   <tr
                     key={`row-${rowIndex}`}
-                    className="odd:bg-gray-50 hover:bg-blue-50"
+                    className="odd:bg-accent odd:bg-opacity-20 hover:bg-accent hover:bg-opacity-30"
                   >
                     {headers.map((header, index) => (
                       <td key={`row-${rowIndex}-${index}`}>{row[header]}</td>

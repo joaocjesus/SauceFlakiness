@@ -78,7 +78,7 @@ function App() {
   // }, []);
 
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
-  const collapsibleStyle = "border border-1 p-2";
+  const collapsibleStyle = "border border-1 p-2 rounded-lg";
 
   return (
     <div className="relative mx-auto">
@@ -95,11 +95,11 @@ function App() {
           Reload
         </button>
       </div>
-      <div className="px-8">
+      <div className="p-8">
         {!loading && (
           <>
             {tests && (
-              <div className="m-2 grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <div className="col-span-1">
                   <CollapsibleRow
                     label="Results PieChart"
@@ -108,7 +108,7 @@ function App() {
                       <PieChart
                         statuses={tests?.statuses}
                         title="Total runs status"
-                        classes="content-center p-10"
+                        classes="p-12"
                       />
                     }
                   />
@@ -118,10 +118,7 @@ function App() {
                     label="Flakiness Chart"
                     classes={collapsibleStyle}
                     content={
-                      <FlakinessTrend
-                        classes="content-center p-10"
-                        data={tests.test_cases}
-                      />
+                      <FlakinessTrend classes="p-5" data={tests.test_cases} />
                     }
                   />
                 </div>

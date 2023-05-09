@@ -10,8 +10,8 @@ module.exports = {
       {
         default: {
           "primary": "#1e3a8a",
-          "secondary": "#3b82f6",
-          "accent": "#7c3aed",
+          "secondary": "#93c5fd",
+          "accent": "#bfdbfe",
           "neutral": "#d1d5db",
           "base-100": "#f3f4f6",
           "info": "#3E5CE0",
