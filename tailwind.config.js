@@ -10,6 +10,7 @@ module.exports = {
       {
         default: {
           "primary": 'rgb(30 58 138)',
+          "secondary": 'rgb(147 197 253)',
         },
       },
     ],
