@@ -66,17 +66,6 @@ function App() {
     initData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     // Fetch the data from the local JSON file and update the state
-  //     const response = await fetch("testResults.json");
-  //     const json = await response.json();
-  //     setTestResults(json);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
   const collapsibleStyle = "border border-1 p-2 rounded-lg";
 
