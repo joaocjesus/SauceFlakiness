@@ -82,14 +82,16 @@ const Table = ({
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
 
+  // useEffect(() => {
+  //   setHeaders(Object.keys(data[0]));
+
+  //   const sortedData = sortData(data);
+  //   setTableData(sortedData || data);
+  // }, []);
+
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
 
-    const sortedData = sortData(data);
-    setTableData(sortedData || data);
-  }, []);
-
-  useEffect(() => {
     const sortedData = sortData(data);
     setTableData(sortedData || data);
   }, [columnSort]);
@@ -101,25 +103,23 @@ const Table = ({
   }, [tableData]);
 
   useEffect(() => {
-    if (testNameFilter) {
       const filterUpdate = setTimeout(() => filterData(), 500);
       return () => clearTimeout(filterUpdate);
-    }
   }, [testNameFilter]);
 
   const filterData = () => {
-    const sourceData = tableData?.length > 0 ? [...tableData] : [...data];
+    const sourceData = [...data];
 
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = filter
-      ? [...sourceData].filter((row) =>
+      ? sourceData.filter((row) =>
         row[filter.column]
           .toLowerCase()
           .includes(testNameFilter.toLowerCase())
       )
       : sourceData;
 
-    setTableData(filtered);
+      setTableData(filtered);
   };
 
   const sortData = (sourceData: ArrayOfObjects) => {
@@ -213,6 +213,11 @@ const Table = ({
                 className="input input-bordered border-secondary focus:border-primary input-sm ml-2 w-96"
               />
               <div className="h-6">
+                {tableData.length > 0 && (
+                  <span className="text-sm text-primary">
+                    Showing {tableData.length} results.
+                  </span>
+                )}
                 {testNameFilter.length > 0 && tableData.length === 0 && (
                   <span className="text-sm text-error">
                     No data found! Maybe try changing the filter.

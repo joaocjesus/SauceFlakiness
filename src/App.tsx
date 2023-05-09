@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
 import FlakinessTrend from "./components/FlakinessTrend";
-import { TestCases, TestCase, Error } from "./types/Tests.type";
+import { TestCases, TestCase, Error, TestStatuses } from "./types/Tests.type";
 import Table, { Order } from "./components/Table";
 import CollapsibleRow from "./components/CollapsibleRow";
 
@@ -24,21 +24,29 @@ export interface TestResults {
 }
 
 function App() {
-  const [tests, setTests] = useState<TestCases>();
+  const [sourceData, setSourceData] = useState<TestCase[]>();
+  const [tableData, setTableData] = useState<TestResults[]>();
+  const [chartData, setChartData] = useState<TestStatuses>();
+  const [flakinessData, setFlakinessData] = useState<TestCase[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [testData, setTestData] = useState<TestResults[]>();
 
-  const setFilteredData = (results: TestResults[]) => {
-    Logger.log("Results: ", results);
+  const getTableResults = (tableResults: TestResults[]) => {
+    const results = tableResults?.map(result => result.name);
+    const filteredTests = sourceData?.filter(({ name }) => results?.includes(name));
+    Logger.log('filteredTests: ', filteredTests);
+    if (filteredTests) {
+      setFlakinessData(filteredTests);
+    }
   };
 
   const initData = async () => {
     setError(null);
     setLoading(true);
 
-    setTestData(undefined);
-    setTests(undefined);
+    setTableData(undefined);
+    setChartData(undefined);
+    setFlakinessData(undefined);
 
     const testCases: TestCases = await getTestCases();
 
@@ -52,9 +60,11 @@ function App() {
         total_runs: Number(row.total_runs),
       }));
       if (filteredTable) {
-        setTestData(filteredTable);
+        setTableData(filteredTable);
       }
-      setTests(testCases);
+      setSourceData(testCases.test_cases);
+      setChartData(testCases.statuses);
+      setFlakinessData(testCases.test_cases);
     } else {
       setLoading(false);
       setError(statusError("Error fetching data", testCases));
@@ -87,37 +97,37 @@ function App() {
       <div className="p-8">
         {!loading && (
           <>
-            {tests && (
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-1">
-                  <CollapsibleRow
-                    label="Results PieChart"
-                    classes={collapsibleStyle}
-                    content={
-                      <PieChart
-                        statuses={tests?.statuses}
-                        title="Total runs status"
-                        classes="p-12"
-                      />
-                    }
-                  />
-                </div>
-                <div className="col-span-2">
-                  <CollapsibleRow
-                    label="Flakiness Chart"
-                    classes={collapsibleStyle}
-                    content={
-                      <FlakinessTrend classes="p-5" data={tests.test_cases} />
-                    }
-                  />
-                </div>
-              </div>
-            )}
-
+            <div className="grid grid-cols-3 gap-2">
+              {/* Test Results Chart */}
+              {chartData && <div className="col-span-1">
+                <CollapsibleRow
+                  label="Results PieChart"
+                  classes={collapsibleStyle}
+                  content={
+                    <PieChart
+                      statuses={chartData}
+                      title="Total runs status"
+                      classes="p-12"
+                    />
+                  }
+                />
+              </div>}
+              {/* Flakiness trends */}
+              {flakinessData && <div className="col-span-2">
+                <CollapsibleRow
+                  label="Flakiness Chart"
+                  classes={collapsibleStyle}
+                  content={
+                    <FlakinessTrend classes="p-5 text-center" data={flakinessData} />
+                  }
+                />
+              </div>}
+            </div>
+            {/* Results Table */}
             <div className="mt-10">
-              {testData && (
+              {tableData && (
                 <Table
-                  data={testData}
+                  data={tableData}
                   title="Test Results"
                   sort={{ column: "failed", order: Order.DESC }}
                   totalsRow="above"
@@ -125,13 +135,14 @@ function App() {
                     column: "name",
                     inputLabel: "Filter by test name:",
                   }}
-                  getTableData={setFilteredData}
+                  getTableData={getTableResults}
                   headerStyle={tableStyles}
                 />
               )}
             </div>
           </>
         )}
+        {loading && <span>Maybe loading data?!</span>}
       </div>
     </div>
   );
