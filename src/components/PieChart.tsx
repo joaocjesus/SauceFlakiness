@@ -1,16 +1,25 @@
 import { Chart, PieController, ArcElement, Tooltip, Title } from "chart.js";
-import { Statuses } from "../types/Tests.type";
+import { TestStatuses } from "../types/Tests.type";
 import { useEffect, useRef } from "react";
 
 // Register required controllers, elements, and plugins
 Chart.register(PieController, ArcElement, Tooltip, Title);
 
 interface PieChartProps {
-  statuses: Statuses;
+  statuses: TestStatuses;
   title?: string;
+  classes?: string;
+  width?: number;
+  height?: number;
 }
 
-const PieChart = ({ statuses, title }: PieChartProps) => {
+const PieChart = ({
+  statuses,
+  title,
+  classes,
+  width,
+  height,
+}: PieChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -56,7 +65,11 @@ const PieChart = ({ statuses, title }: PieChartProps) => {
     };
   }, [statuses]);
 
-  return <canvas className="chart" ref={canvasRef} id="pieChart"></canvas>;
+  return (
+    <div className={classes}>
+      <canvas className="chart" ref={canvasRef} id="pieChart"></canvas>
+    </div>
+  );
 };
 
 export default PieChart;
