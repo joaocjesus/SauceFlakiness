@@ -9,11 +9,21 @@ module.exports = {
     themes: [
       {
         default: {
-          "primary": 'rgb(30 58 138)',
-          "secondary": 'rgb(147 197 253)',
+          "primary": "#1e3a8a",
+          "secondary": "#3b82f6",
+          "accent": "#7c3aed",
+          "neutral": "#d1d5db",
+          "base-100": "#f3f4f6",
+          "info": "#3E5CE0",
+          "success": "#0F7041",
+          "warning": "#AC8E06",
+          "error": "#be123c",
         },
       },
     ],
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("daisyui"),
+  ],
 }

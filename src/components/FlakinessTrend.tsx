@@ -43,17 +43,28 @@ function calculateFlakinessTrend(
   return flakinessTrend;
 }
 
-const FlakinessTrend = ({ data }: { data: TestCase[] }) => {
+const FlakinessTrend = ({
+  data,
+  title,
+  classes,
+}: {
+  data: TestCase[];
+  title?: string;
+  classes?: string;
+}) => {
   const [testData, setTestData] = useState<TestCase[]>();
+  const [loading, setLoading] = useState(false);
   const [flakinessTrend, setFlakinessTrend] = useState<{
     [key: string]: number[];
   }>({});
   const xRuns = 20;
 
   useEffect(() => {
+    setLoading(true);
     setTestData(data);
     const trend = calculateFlakinessTrend(data, xRuns);
     setFlakinessTrend(trend);
+    setLoading(false);
   }, []);
 
   const chartData = testData
@@ -94,10 +105,17 @@ const FlakinessTrend = ({ data }: { data: TestCase[] }) => {
   };
 
   return (
-    <div>
-      <h2>Flakiness Trend</h2>
-      {chartData && <Line data={chartData} options={chartOptions} />}
-      {!chartData && <span>No data loaded!</span>}
+    <div className={classes}>
+      <h2>{title}</h2>
+      {chartData && (
+        <Line
+          className="content-center"
+          data={chartData}
+          options={chartOptions}
+        />
+      )}
+      {loading && <span>Loading...</span>}
+      {!chartData && !loading && <span>No data loaded!</span>}
     </div>
   );
 };

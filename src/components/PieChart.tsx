@@ -8,9 +8,18 @@ Chart.register(PieController, ArcElement, Tooltip, Title);
 interface PieChartProps {
   statuses: TestStatuses;
   title?: string;
+  classes?: string;
+  width?: number;
+  height?: number;
 }
 
-const PieChart = ({ statuses, title }: PieChartProps) => {
+const PieChart = ({
+  statuses,
+  title,
+  classes,
+  width,
+  height,
+}: PieChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -56,7 +65,11 @@ const PieChart = ({ statuses, title }: PieChartProps) => {
     };
   }, [statuses]);
 
-  return <canvas className="chart" ref={canvasRef} id="pieChart"></canvas>;
+  return (
+    <div className={classes}>
+      <canvas className="chart" ref={canvasRef} id="pieChart"></canvas>
+    </div>
+  );
 };
 
 export default PieChart;

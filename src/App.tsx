@@ -4,6 +4,7 @@ import { getTestCases } from "./api/sauce.api";
 import FlakinessTrend from "./components/FlakinessTrend";
 import { TestCases, TestCase, Error } from "./types/Tests.type";
 import Table, { Order } from "./components/Table";
+import CollapsibleRow from "./components/CollapsibleRow";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -77,6 +78,7 @@ function App() {
   // }, []);
 
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
+  const collapsibleStyle = "border border-1 p-2";
 
   return (
     <div className="relative mx-auto">
@@ -96,11 +98,35 @@ function App() {
       <div className="px-8">
         {!loading && (
           <>
-            {/* {tests && (
-          <div className="w-80 mx-auto">
-            <PieChart statuses={tests?.statuses} title="Total runs status" />
-          </div>
-        )} */}
+            {tests && (
+              <div className="m-2 grid grid-cols-3 gap-2">
+                <div className="col-span-1">
+                  <CollapsibleRow
+                    label="Results PieChart"
+                    classes={collapsibleStyle}
+                    content={
+                      <PieChart
+                        statuses={tests?.statuses}
+                        title="Total runs status"
+                        classes="content-center p-10"
+                      />
+                    }
+                  />
+                </div>
+                <div className="col-span-2">
+                  <CollapsibleRow
+                    label="Flakiness Chart"
+                    classes={collapsibleStyle}
+                    content={
+                      <FlakinessTrend
+                        classes="content-center p-10"
+                        data={tests.test_cases}
+                      />
+                    }
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="mt-10">
               {testData && (
@@ -118,8 +144,6 @@ function App() {
                 />
               )}
             </div>
-
-            {/* {tests && <FlakinessTrend data={tests.test_cases} />} */}
           </>
         )}
       </div>
