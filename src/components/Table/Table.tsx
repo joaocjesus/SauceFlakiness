@@ -36,8 +36,6 @@ const SORT_DESC_ICON = (
   </svg>
 );
 
-
-
 const Table = ({
   data,
   title,
@@ -53,7 +51,7 @@ const Table = ({
   });
 
   const [testNameFilter, setTestNameFilter] = useState<string>("");
-  const [tableData, setTableData] = useState<KeyArray>([]);
+  const [tableData, setTableData] = useState<KeyArray>([...data]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
 
@@ -67,7 +65,7 @@ const Table = ({
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
 
-    const sortedData = sortData(data);
+    const sortedData = sortData(tableData);
     setTableData(sortedData || data);
   }, [columnSort]);
 
