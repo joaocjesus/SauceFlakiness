@@ -57,8 +57,9 @@ const Table = ({
 
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
+  
     const sortedData = sortData(tableData);
-    setTableData(sortedData);
+    setTableData(sortedData || tableData);
   }, [columnSort]);
 
   useEffect(() => {
@@ -88,6 +89,8 @@ const Table = ({
   };
 
   const sortData = (sourceData: KeyArray) => {
+    if(!sourceData || sourceData.length === 0) return;
+
     let { column, order } = columnSort;
 
     // Sort data if <sort> parameter was specified
@@ -158,6 +161,10 @@ const Table = ({
     }
   };
 
+  const clearFilter = () => {
+    setTestNameFilter("");
+  }
+
   return (
     <div className="mt-5 border border-blue-200 rounded-lg p-3">
       {title && (
@@ -165,7 +172,7 @@ const Table = ({
           {title}
         </div>
       )}
-      {tableData && tableData.length > 0 && (
+      {tableData && (
         <>
           {filter && (
             <div className="mt-5">
@@ -177,6 +184,13 @@ const Table = ({
                 onChange={handleFilterChange}
                 className="input input-bordered border-secondary focus:border-primary input-sm ml-2 w-96"
               />
+              <button
+                className="btn-sm btn-secondary text-primary hover:text-white hover:bg-red-800 rounded-md ml-2"
+                title="Clear filter"
+                onClick={clearFilter}
+              >
+                X
+              </button>
               <div className="h-6">
                 {tableData.length > 0 && (
                   <span className="text-sm text-primary">
