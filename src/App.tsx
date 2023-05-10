@@ -82,7 +82,7 @@ function App() {
   }
 
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
-  const collapsibleStyle = 'bg-white border border-1 p-2 rounded-lg w-full';
+  const collapsibleStyle = 'bg-white border border-accent p-2 rounded-lg w-full';
 
   return (
     <div className="relative mx-auto">
