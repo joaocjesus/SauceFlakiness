@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
-import FlakinessTrend from "./components/FlakinessTrend";
+import FlakinessTrend from "./components/FlakinessTrend/FlakinessTrend";
 import { TestCases, TestCase, Error, TestStatuses } from "./types/Tests.type";
-import Table, { Order } from "./components/Table";
+import Table from "./components/Table/Table";
 import CollapsibleRow from "./components/CollapsibleRow";
+import { TableOrder } from "./components/Table/Table.props";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -139,7 +140,7 @@ function App() {
                 <Table
                   data={tableData}
                   title="Test Results"
-                  sort={{ column: "failed", order: Order.DESC }}
+                  sort={{ column: "failed", order: TableOrder.DESC }}
                   totalsRow="above"
                   filter={{
                     column: "name",

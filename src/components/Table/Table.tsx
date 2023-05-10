@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import { sortArray } from "../helpers/helpers";
-
-export enum Order {
-  ASC = "asc",
-  DESC = "desc",
-}
+import { sortArray } from "../../helpers/helpers";
+import { TableOrder, SortProps, TableProps, KeyArray } from "./Table.props";
 
 const SORT_ASC_ICON = (
   <svg
@@ -40,28 +36,7 @@ const SORT_DESC_ICON = (
   </svg>
 );
 
-type ArrayOfObjects = Array<{ [key: string]: any }>;
 
-interface SortProps {
-  column: string;
-  order: Order.ASC | Order.DESC;
-}
-
-interface HeaderStyleProps {
-  name: string;
-  index?: number;
-  style: string;
-}
-
-interface TableProps {
-  data: ArrayOfObjects;
-  title?: string;
-  sort?: SortProps;
-  totalsRow?: "above" | "below";
-  filter?: { column: string; inputLabel: string };
-  getTableData?: Function;
-  headerStyle?: HeaderStyleProps[];
-}
 
 const Table = ({
   data,
@@ -74,11 +49,11 @@ const Table = ({
 }: TableProps) => {
   const defaultSort = () => ({
     column: Object.keys(data[0])[0],
-    order: Order.ASC,
+    order: TableOrder.ASC,
   });
 
   const [testNameFilter, setTestNameFilter] = useState<string>("");
-  const [tableData, setTableData] = useState<ArrayOfObjects>([]);
+  const [tableData, setTableData] = useState<KeyArray>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
 
@@ -103,8 +78,8 @@ const Table = ({
   }, [tableData]);
 
   useEffect(() => {
-      const filterUpdate = setTimeout(() => filterData(), 500);
-      return () => clearTimeout(filterUpdate);
+    const filterUpdate = setTimeout(() => filterData(), 500);
+    return () => clearTimeout(filterUpdate);
   }, [testNameFilter]);
 
   const filterData = () => {
@@ -119,10 +94,10 @@ const Table = ({
       )
       : sourceData;
 
-      setTableData(filtered);
+    setTableData(filtered);
   };
 
-  const sortData = (sourceData: ArrayOfObjects) => {
+  const sortData = (sourceData: KeyArray) => {
     let { column, order } = columnSort;
 
     // Sort data if <sort> parameter was specified
@@ -138,9 +113,9 @@ const Table = ({
   const getSortIcon = (header: string) => {
     if (isSortedHeader(header)) {
       switch (columnSort?.order) {
-        case Order.ASC:
+        case TableOrder.ASC:
           return SORT_ASC_ICON;
-        case Order.DESC:
+        case TableOrder.DESC:
           return SORT_DESC_ICON;
       }
     }
@@ -182,7 +157,7 @@ const Table = ({
   );
 
   const handleColumnClick = (header: string) => {
-    const newOrder = columnSort.order === Order.ASC ? Order.DESC : Order.ASC;
+    const newOrder = columnSort.order === TableOrder.ASC ? TableOrder.DESC : TableOrder.ASC;
     setColumnSort({ column: header, order: newOrder });
   };
 

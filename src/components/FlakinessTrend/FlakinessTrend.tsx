@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { TestCase } from "../types/Tests.type";
+import { TestCase } from "../../types/Tests.type";
+import { AggregatedData, ChartData, KeyNumArray } from "./FlakinessTrend.props";
+
 import "chart.js/auto";
 
-type ObjArray = {
-  [key: string]: number[];
-}
+
 
 const calculateFlakinessTrend = (
   data: TestCase[],
   xRuns: number
-): ObjArray => {
+): KeyNumArray => {
   // Initialize an object to store the flakiness trend for each test case.
   const flakinessTrend: { [key: string]: number[] } = {};
 
@@ -49,7 +49,7 @@ const calculateFlakinessTrend = (
   return flakinessTrend;
 }
 
-const calculateAggregateTrend = (trend?: ObjArray) => {
+const calculateAggregateTrend = (trend?: KeyNumArray) => {
   if (!trend) return;
   const testQuantity = Object.entries(trend).reduce((accumulator, current) => {
     return accumulator + current[1].length;
@@ -66,7 +66,7 @@ const calculateAggregateTrend = (trend?: ObjArray) => {
 
   const totalPercentage = percentageSum / testQuantity;
 
-  const aggregate: ObjArray = { 'total': [] };
+  const aggregate: KeyNumArray = { 'total': [] };
 
   for (let i = 0; i < maxBlocks; i++) {
     let percentageSum = 0;
@@ -83,24 +83,6 @@ const calculateAggregateTrend = (trend?: ObjArray) => {
   return ({ maxBlocks, testQuantity, totalPercentage, aggregatedTrends: aggregate });
 }
 
-type AggregatedData = {
-  aggregatedTrends?: ObjArray,
-  maxBlocks?: number,
-  testQuantity?: number,
-  totalPercentage?: number
-}
-
-type ChartData = {
-  labels: number[];
-  datasets: {
-    label: string;
-    data: any;
-    borderColor: string;
-    borderWidth: number;
-    fill: boolean;
-  }[];
-}
-
 const FlakinessTrend = ({
   data,
   title,
@@ -111,9 +93,9 @@ const FlakinessTrend = ({
   classes?: string;
 }) => {
   const [testData, setTestData] = useState<TestCase[]>();
-  const [flakinessTrend, setFlakinessTrend] = useState<ObjArray>({});
+  const [flakinessTrend, setFlakinessTrend] = useState<KeyNumArray>({});
   const [aggregatedResults, setAggregatedResults] = useState<AggregatedData>();
-  const [trendData, setTrendData] = useState<ObjArray>();
+  const [trendData, setTrendData] = useState<KeyNumArray>();
   const [showAggregate, setShowAggregate] = useState(false);
   const [chartData, setChartData] = useState<ChartData>();
   const xRuns = 40;
