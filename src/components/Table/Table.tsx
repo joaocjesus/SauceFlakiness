@@ -1,40 +1,7 @@
 import { useEffect, useState } from "react";
 import { sortArray } from "../../helpers/helpers";
+import { ColumnHeader } from "./ColumnHeader";
 import { TableOrder, SortProps, TableProps, KeyArray } from "./Table.props";
-
-const SORT_ASC_ICON = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke-width={1.5}
-    stroke="currentColor"
-    className="w-4 h-4"
-  >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M4.5 15.75l7.5-7.5 7.5 7.5"
-    />
-  </svg>
-);
-
-const SORT_DESC_ICON = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-4 h-4"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-    />
-  </svg>
-);
 
 const Table = ({
   data,
@@ -45,7 +12,7 @@ const Table = ({
   getTableData,
   headerStyle,
 }: TableProps) => {
-  const defaultSort = () => ({
+  const defaultSort = ({
     column: Object.keys(data[0])[0],
     order: TableOrder.ASC,
   });
@@ -57,7 +24,9 @@ const Table = ({
 
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
-  
+  }, []);
+
+  useEffect(() => {
     const sortedData = sortData(tableData);
     setTableData(sortedData || tableData);
   }, [columnSort]);
@@ -89,7 +58,7 @@ const Table = ({
   };
 
   const sortData = (sourceData: KeyArray) => {
-    if(!sourceData || sourceData.length === 0) return;
+    if (!sourceData || sourceData.length === 0) return;
 
     let { column, order } = columnSort;
 
@@ -101,39 +70,6 @@ const Table = ({
     });
 
     return sortedData;
-  };
-
-  const getSortIcon = (header: string) => {
-    if (isSortedHeader(header)) {
-      switch (columnSort?.order) {
-        case TableOrder.ASC:
-          return SORT_ASC_ICON;
-        case TableOrder.DESC:
-          return SORT_DESC_ICON;
-      }
-    }
-  };
-
-  const isSortedHeader = (header: string) =>
-    columnSort?.column?.toLowerCase() === header?.toLowerCase();
-
-  const formattedHeader = (header: string) => {
-    const normalized = header.replaceAll(/[_-]/g, " ");
-    const newHeader = normalized.charAt(0).toUpperCase() + normalized.slice(1);
-    return newHeader;
-  };
-
-  const getStyle = (header: string, colIndex: number): string => {
-    if (!headerStyle) return "";
-
-    // Finds column by name or index if passed via columnFormat
-    const column = headerStyle.find(({ index, name }) =>
-      name
-        ? name.toLowerCase() === header || name.toLowerCase() === "*"
-        : index === colIndex
-    );
-
-    return column?.style || "";
   };
 
   const renderTotals = () => (
@@ -149,11 +85,6 @@ const Table = ({
     </tr>
   );
 
-  const handleColumnClick = (header: string) => {
-    const newOrder = columnSort.order === TableOrder.ASC ? TableOrder.DESC : TableOrder.ASC;
-    setColumnSort({ column: header, order: newOrder });
-  };
-
   const handleFilterChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
     if (!Number.isNaN(value)) {
@@ -166,7 +97,7 @@ const Table = ({
   }
 
   return (
-    <div className="mt-5 border border-blue-200 rounded-lg p-3">
+    <div className="mt-5 border border-accent rounded-lg p-3">
       {title && (
         <div className="text-center text-primary font-bold text-2xl">
           {title}
@@ -182,7 +113,7 @@ const Table = ({
                 id="test-name"
                 value={testNameFilter}
                 onChange={handleFilterChange}
-                className="input input-bordered border-secondary focus:border-primary input-sm ml-2 w-96"
+                className="input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2 w-96"
               />
               <button
                 className="btn-sm btn-secondary text-primary hover:text-white hover:bg-red-800 rounded-md ml-2"
@@ -209,19 +140,15 @@ const Table = ({
             <table className="w-full table-compact">
               <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
-                  {headers.map((header, index) => (
-                    <th
-                      key={index}
-                      title={header}
-                      className={"cursor-pointer " + getStyle(header, index)}
-                      onClick={() => handleColumnClick(header)}
-                    >
-                      <span className="flex items-center">
-                        {formattedHeader(header)}
-                        <span className="ml-1 w-1">{getSortIcon(header)}</span>
-                      </span>
-                    </th>
-                  ))}
+                  {headers.map((header, index) => <ColumnHeader
+                  key={index}
+                    header={header}
+                    index={index}
+                    columnSort={columnSort}
+                    setColumnSort={setColumnSort}
+                    headerStyle={headerStyle}
+                  />
+                  )}
                 </tr>
                 {totalsRow === "above" && renderTotals()}
               </thead>
