@@ -55,30 +55,22 @@ const Table = ({
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
 
-  // useEffect(() => {
-  //   setHeaders(Object.keys(data[0]));
-
-  //   const sortedData = sortData(data);
-  //   setTableData(sortedData || data);
-  // }, []);
-
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
-
     const sortedData = sortData(tableData);
-    setTableData(sortedData || data);
+    setTableData(sortedData);
   }, [columnSort]);
+
+  useEffect(() => {
+    const filterUpdate = setTimeout(() => filterData(), 500);
+    return () => clearTimeout(filterUpdate);
+  }, [testNameFilter]);
 
   useEffect(() => {
     if (getTableData) {
       getTableData(tableData);
     }
   }, [tableData]);
-
-  useEffect(() => {
-    const filterUpdate = setTimeout(() => filterData(), 500);
-    return () => clearTimeout(filterUpdate);
-  }, [testNameFilter]);
 
   const filterData = () => {
     const sourceData = [...data];
@@ -173,7 +165,7 @@ const Table = ({
           {title}
         </div>
       )}
-      {tableData && (
+      {tableData && tableData.length > 0 && (
         <>
           {filter && (
             <div className="mt-5">
@@ -199,7 +191,7 @@ const Table = ({
               </div>
             </div>
           )}
-          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px] min-h-[200px]">
+          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px]">
             <table className="w-full table-compact">
               <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
