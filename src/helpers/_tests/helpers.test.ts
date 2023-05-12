@@ -1,4 +1,4 @@
-import { sortArray, getEmptyValues, throwErrorIfAnyEmpty } from '../helpers';
+import { sortArray, getEmptyValues, throwErrorIfAnyEmpty } from 'helpers/helpers';
 
 describe('helpers', () => {
   describe('sortArray', () => {

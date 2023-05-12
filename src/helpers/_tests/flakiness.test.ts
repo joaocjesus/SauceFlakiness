@@ -1,4 +1,4 @@
-import { calculateFlakinessTrend, calculateAggregateTrend } from '../flakiness';
+import { calculateFlakinessTrend, calculateAggregateTrend } from "helpers/flakiness";
 
 const data = [
   {
