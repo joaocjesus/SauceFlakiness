@@ -3,7 +3,10 @@ import { Line } from "react-chartjs-2";
 import { TestCase } from "../types/Tests.type";
 import "chart.js/auto";
 import { ObjArray } from "../types/global.types";
-import { calculateFlakinessTrend } from "../helpers/flakiness";
+import {
+  calculateAggregateTrend,
+  calculateFlakinessTrend,
+} from "../helpers/flakiness";
 
 type AggregatedData = {
   aggregatedTrends?: ObjArray;
