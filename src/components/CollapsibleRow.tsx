@@ -7,7 +7,7 @@ interface CollapsibleRowProps {
   classes?: string;
 }
 
-const COLLAPSIBLE_ROW_CLASS = 'collapsible-row';
+const COLLAPSIBLE_ROW_CLASS = "collapsible-row";
 
 const CollapsibleRow = ({
   label,
@@ -21,9 +21,15 @@ const CollapsibleRow = ({
 
   // Control clicking outside the component
   useEffect(() => {
-    const handleClickOutside = (e: { target: any; }) => {
+    if (!floatContent) {
+      return;
+    }
+
+    const handleClickOutside = (e: { target: any }) => {
       if (ref.current) {
-        const collapsibleRows = document.getElementsByClassName(COLLAPSIBLE_ROW_CLASS)
+        const collapsibleRows = document.getElementsByClassName(
+          COLLAPSIBLE_ROW_CLASS
+        );
         let clickedCollapsibleRow = false;
         for (let i = 0; i < collapsibleRows.length; i++) {
           if (collapsibleRows.item(i)?.contains(e.target)) {
@@ -36,30 +42,39 @@ const CollapsibleRow = ({
         }
       }
     };
-    document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener("click", handleClickOutside, true);
     return () => {
-      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener("click", handleClickOutside, true);
     };
-  }, []);
+  }, [floatContent]);
 
   // Toggle the isExpanded state when the label is clicked
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
-  return (<>
-    <div ref={ref} className={`${floatContent ? 'h-10' : ''} ${COLLAPSIBLE_ROW_CLASS} relative`}>
-      <div className={`${classes} ${floatContent ? 'absolute z-10' : ''}`}>
-        <button
-          onClick={handleToggle}
-          className={`btn btn-sm w-full ${isExpanded ? "btn-secondary" : "btn-primary"}`}>
-          {label}
-        </button>
-        <div className={isExpanded ? "" : "hidden"}>{content}</div>
+  return (
+    <>
+      <div
+        ref={ref}
+        className={`${
+          floatContent ? "h-10" : ""
+        } ${COLLAPSIBLE_ROW_CLASS} relative`}
+      >
+        <div className={`${classes} ${floatContent ? "absolute z-10" : ""}`}>
+          <button
+            onClick={handleToggle}
+            className={`btn btn-sm w-full ${
+              isExpanded ? "btn-secondary" : "btn-primary"
+            }`}
+          >
+            {label}
+          </button>
+          <div className={isExpanded ? "" : "hidden"}>{content}</div>
+        </div>
       </div>
-    </div>
     </>
   );
 };
 
-export default CollapsibleRow;
+export { CollapsibleRow };
