@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { sortArray } from "../../helpers/helpers";
-import { ColumnHeader } from "./ColumnHeader";
+import { sortArray } from "helpers/helpers";
+import { ColumnHeader } from "components";
 import { TableOrder, SortProps, TableProps, KeyArray } from "./Table.props";
 
 const Table = ({
@@ -12,10 +12,10 @@ const Table = ({
   getTableData,
   headerStyle,
 }: TableProps) => {
-  const defaultSort = ({
+  const defaultSort = {
     column: Object.keys(data[0])[0],
     order: TableOrder.ASC,
-  });
+  };
 
   const [testNameFilter, setTestNameFilter] = useState<string>("");
   const [tableData, setTableData] = useState<KeyArray>([...data]);
@@ -48,10 +48,10 @@ const Table = ({
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = filter
       ? sourceData.filter((row) =>
-        row[filter.column]
-          .toLowerCase()
-          .includes(testNameFilter.toLowerCase())
-      )
+          row[filter.column]
+            .toLowerCase()
+            .includes(testNameFilter.toLowerCase())
+        )
       : sourceData;
 
     setTableData(filtered);
@@ -94,7 +94,7 @@ const Table = ({
 
   const clearFilter = () => {
     setTestNameFilter("");
-  }
+  };
 
   return (
     <div className="mt-5 border border-accent rounded-lg p-3">
@@ -107,10 +107,11 @@ const Table = ({
         <>
           {filter && (
             <div className="mt-5">
-              <label htmlFor="test-name">{filter.inputLabel}</label>
+              <label htmlFor="filter-input">{filter.inputLabel}</label>
               <input
                 type="text"
-                id="test-name"
+                id="filter-input"
+                data-testid="filter-input"
                 value={testNameFilter}
                 onChange={handleFilterChange}
                 className="input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2 w-96"
@@ -140,15 +141,16 @@ const Table = ({
             <table className="w-full table-compact">
               <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
-                  {headers.map((header, index) => <ColumnHeader
-                  key={index}
-                    header={header}
-                    index={index}
-                    columnSort={columnSort}
-                    setColumnSort={setColumnSort}
-                    headerStyle={headerStyle}
-                  />
-                  )}
+                  {headers.map((header, index) => (
+                    <ColumnHeader
+                      key={index}
+                      header={header}
+                      index={index}
+                      columnSort={columnSort}
+                      setColumnSort={setColumnSort}
+                      headerStyle={headerStyle}
+                    />
+                  ))}
                 </tr>
                 {totalsRow === "above" && renderTotals()}
               </thead>
@@ -173,4 +175,4 @@ const Table = ({
   );
 };
 
-export default Table;
+export { Table };

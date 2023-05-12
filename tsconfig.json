@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "outDir": "./build",
     "rootDir": "./",
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "declaration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -23,5 +22,5 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "exclude": ["functions/**/*"],
+  "exclude": ["functions/**/*"]
 }

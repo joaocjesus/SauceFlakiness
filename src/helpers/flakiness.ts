@@ -1,5 +1,5 @@
-import { TestCase } from "../types/Tests.type";
-import { ObjArray } from "../types/global.types";
+import { TestCase } from "types/Tests.type";
+import { ObjArray } from "types/global.types";
 
 export const calculateFlakinessTrend = (
   data: TestCase[],
@@ -32,8 +32,6 @@ export const calculateFlakinessTrend = (
       // Add the flakiness percentage to the flakinessData array.
       flakinessData.push(flakinessPercentage);
     }
-
-
 
     // Store the flakiness data for the current test case in the flakinessTrend object.
     flakinessTrend[testCase.name] = flakinessData;

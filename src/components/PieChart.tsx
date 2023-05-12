@@ -1,5 +1,5 @@
 import { Chart, PieController, ArcElement, Tooltip, Title } from "chart.js";
-import { TestStatuses } from "../types/Tests.type";
+import { TestStatuses } from "types/Tests.type";
 import { useEffect, useRef } from "react";
 
 // Register required controllers, elements, and plugins
@@ -72,4 +72,4 @@ const PieChart = ({
   );
 };
 
-export default PieChart;
+export { PieChart };

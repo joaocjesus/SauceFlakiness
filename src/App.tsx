@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import PieChart from "./components/PieChart";
-import { getTestCases } from "./api/sauce.api";
-import FlakinessTrend from "./components/FlakinessTrend/FlakinessTrend";
-import { TestCases, TestCase, Error, TestStatuses } from "./types/Tests.type";
-import Table from "./components/Table/Table";
-import CollapsibleRow from "./components/CollapsibleRow";
-import { TableOrder } from "./components/Table/Table.props";
+import { CollapsibleRow, FlakinessTrend, PieChart, Table } from "components";
+import { getTestCases } from "api/sauce.api";
+import { TestCases, TestCase, Error, TestStatuses } from "types/Tests.type";
+import { TableOrder } from "components/Table/Table.props";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -62,16 +59,19 @@ function App() {
       setSourceData(testCases.test_cases);
       setChartData(testCases.statuses);
       setFlakinessData(testCases.test_cases);
-    } else {
-      setLoading(false);
+    }
+
+    setLoading(false);
+    if (!testCases?.test_cases) {
       setError(statusError("Error fetching data", testCases));
     }
-    setLoading(false);
   };
 
   const getTableResults = (tableResults: TestResults[]) => {
-    const results = tableResults?.map(result => result.name);
-    const filteredTests = sourceData?.filter(({ name }) => results?.includes(name));
+    const results = tableResults?.map((result) => result.name);
+    const filteredTests = sourceData?.filter(({ name }) =>
+      results?.includes(name)
+    );
     if (filteredTests) {
       setFlakinessData(filteredTests);
     }
@@ -79,10 +79,11 @@ function App() {
 
   const handleFloatPanelsChange = () => {
     setFloatPanels(!floatPanels);
-  }
+  };
 
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
-  const collapsibleStyle = 'bg-white border border-accent p-2 rounded-lg w-full';
+  const collapsibleStyle =
+    "bg-white border border-accent p-2 rounded-lg w-full";
 
   return (
     <div className="relative mx-auto">
@@ -99,7 +100,12 @@ function App() {
           Reload
         </button>
         <label className="float-right mx-5 mt-1">
-          <input className="mx-2" type="checkbox" checked={floatPanels} onChange={handleFloatPanelsChange} />
+          <input
+            className="mx-2"
+            type="checkbox"
+            checked={floatPanels}
+            onChange={handleFloatPanelsChange}
+          />
           Float panels
         </label>
       </div>
@@ -108,31 +114,38 @@ function App() {
           <>
             <div className="grid grid-cols-3 gap-2">
               {/* Test Results Chart */}
-              {chartData && <div className="col-span-1">
-                <CollapsibleRow
-                  label="Results PieChart"
-                  classes={collapsibleStyle}
-                  floatContent={floatPanels}
-                  content={
-                    <PieChart
-                      statuses={chartData}
-                      title="Total runs status"
-                      classes="p-10"
-                    />
-                  }
-                />
-              </div>}
+              {chartData && (
+                <div className="col-span-1">
+                  <CollapsibleRow
+                    label="Results PieChart"
+                    classes={collapsibleStyle}
+                    floatContent={floatPanels}
+                    content={
+                      <PieChart
+                        statuses={chartData}
+                        title="Total runs status"
+                        classes="p-10"
+                      />
+                    }
+                  />
+                </div>
+              )}
               {/* Flakiness trends */}
-              {flakinessData && <div className="col-span-2">
-                <CollapsibleRow
-                  label="Flakiness Chart"
-                  classes={collapsibleStyle}
-                  floatContent={floatPanels}
-                  content={
-                    <FlakinessTrend classes="p-5 text-center" data={flakinessData} />
-                  }
-                />
-              </div>}
+              {flakinessData && (
+                <div className="col-span-2">
+                  <CollapsibleRow
+                    label="Flakiness Chart"
+                    classes={collapsibleStyle}
+                    floatContent={floatPanels}
+                    content={
+                      <FlakinessTrend
+                        classes="p-5 text-center"
+                        data={flakinessData}
+                      />
+                    }
+                  />
+                </div>
+              )}
             </div>
             {/* Results Table */}
             <div className="mt-4">

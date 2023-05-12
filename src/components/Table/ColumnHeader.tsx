@@ -48,7 +48,7 @@ const sortIcons = {
   [TableOrder.DESC]: SORT_ICON_DESC,
 };
 
-export const ColumnHeader = ({
+const ColumnHeader = ({
   index,
   header,
   setColumnSort,
@@ -127,10 +127,11 @@ export const ColumnHeader = ({
     <th
       key={index}
       title={header}
-      className={"cursor-pointer" + style}
+      className={"cursor-pointer " + style}
       onClick={() => handleColumnClick()}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-testid={`column-header-${index}`}
     >
       <span className="flex items-center">
         {formattedHeader(header)}
@@ -139,3 +140,5 @@ export const ColumnHeader = ({
     </th>
   );
 };
+
+export { ColumnHeader };
