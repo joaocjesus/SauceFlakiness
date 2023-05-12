@@ -1,74 +1,45 @@
 import { calculateFlakinessTrend, calculateAggregateTrend } from '../flakiness';
 
+const data = [
+  {
+    name: 'test1',
+    total_runs: 10,
+    statuses: {
+      failed: 2,
+      passed: 6,
+      error: 2,
+    },
+    error_rate: 0,
+    fail_rate: 20,
+    pass_rate: 60,
+    avg_duration: 99,
+    median_duration: 99,
+    total_duration: 990,
+  },
+  {
+    name: 'test2',
+    total_runs: 10,
+    statuses: {
+      failed: 5,
+      passed: 5,
+    },
+    error_rate: 0,
+    fail_rate: 50,
+    pass_rate: 50,
+    avg_duration: 131,
+    median_duration: 131,
+    total_duration: 1310,
+  },
+];
+
 // fix the following tests
 describe('calculateFlakinessTrend', () => {
   it('should return an object', () => {
-    const data = [
-      {
-        name: 'test1',
-        total_runs: 10,
-        statuses: {
-          failed: 2,
-          passed: 6,
-          error: 2,
-        },
-        error_rate: 0,
-        fail_rate: 20,
-        pass_rate: 60,
-        avg_duration: 99,
-        median_duration: 99,
-        total_duration: 990,
-      },
-      {
-        name: 'test2',
-        total_runs: 10,
-        statuses: {
-          failed: 5,
-          passed: 5,
-        },
-        error_rate: 0,
-        fail_rate: 50,
-        pass_rate: 50,
-        avg_duration: 131,
-        median_duration: 131,
-        total_duration: 1310,
-      },
-    ];
     const trend = calculateFlakinessTrend(data, 20);
     expect(typeof trend).toBe('object');
   });
 
   it('should return an object with the same number of keys as the input array', () => {
-    const data = [
-      {
-        name: 'test1',
-        total_runs: 10,
-        statuses: {
-          failed: 2,
-          passed: 8,
-        },
-        error_rate: 0,
-        fail_rate: 20,
-        pass_rate: 80,
-        avg_duration: 99,
-        median_duration: 99,
-        total_duration: 990,
-      },
-      {
-        name: 'test2',
-        total_runs: 10,
-        statuses: {
-          failed: 5,
-          passed: 5,
-        },
-        error_rate: 0,
-        fail_rate: 50,
-        pass_rate: 50,
-        avg_duration: 131,
-        median_duration: 131,
-        total_duration: 1310,
-      },
-    ];
     const trend = calculateFlakinessTrend(data, 20);
     expect(Object.keys(trend).length).toBe(data.length);
   });
@@ -80,13 +51,13 @@ describe('calculateAggregateTrend', () => {
     test2: [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
   };
 
-  it('should return an object', () => {
+  test('should return an object', () => {
     const aggregate = calculateAggregateTrend(trend);
     expect(typeof aggregate).toBe('object');
   }
   );
 
-  it('should return an object with the expected keys', () => {
+  test('should return an object with the expected keys', () => {
     const aggregate = calculateAggregateTrend(trend);
 
     // Check if aggregate is not undefined

@@ -1,12 +1,6 @@
 import { TestCase } from "../types/Tests.type";
 import { ObjArray } from "../types/global.types";
 
-// Calculate flakiness of a test
-export const calculateFlakiness = (test: Test) => {
-  const { runs, passes } = test;
-  return (runs - passes) / runs;
-}
-
 export const calculateFlakinessTrend = (
   data: TestCase[],
   xRuns: number
