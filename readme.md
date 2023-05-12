@@ -34,7 +34,7 @@ Refer to [.env.example](.env.example).
 
 - Test cases: `/v2/insights/rdc/test-cases`
 - Builds: `/v2/builds/rdc` (not yet documented in SauceLabs docs)
-- Jobs: `/v1/rdc/jobs`
+- Jobs: `/v2/archives/rdc/jobs`
 
 Refer to SauceLabs' [APIs Docs](https://docs.saucelabs.com/dev/api/).
 

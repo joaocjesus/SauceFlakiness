@@ -1,30 +1,13 @@
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { TestCase } from "../types/Tests.type";
+import { TestCase } from "../../types/Tests.type";
+import { AggregatedData, ChartData, KeyNumArray } from "./FlakinessTrend.props";
+
 import "chart.js/auto";
-import { ObjArray } from "../types/global.types";
 import {
   calculateAggregateTrend,
   calculateFlakinessTrend,
-} from "../helpers/flakiness";
-
-type AggregatedData = {
-  aggregatedTrends?: ObjArray;
-  maxBlocks?: number;
-  testQuantity?: number;
-  totalPercentage?: number;
-};
-
-type ChartData = {
-  labels: number[];
-  datasets: {
-    label: string;
-    data: any;
-    borderColor: string;
-    borderWidth: number;
-    fill: boolean;
-  }[];
-};
+} from "../../helpers/flakiness";
 
 const FlakinessTrend = ({
   data,
@@ -36,9 +19,9 @@ const FlakinessTrend = ({
   classes?: string;
 }) => {
   const [testData, setTestData] = useState<TestCase[]>();
-  const [flakinessTrend, setFlakinessTrend] = useState<ObjArray>({});
+  const [flakinessTrend, setFlakinessTrend] = useState<KeyNumArray>({});
   const [aggregatedResults, setAggregatedResults] = useState<AggregatedData>();
-  const [trendData, setTrendData] = useState<ObjArray>();
+  const [trendData, setTrendData] = useState<KeyNumArray>();
   const [showAggregate, setShowAggregate] = useState(false);
   const [chartData, setChartData] = useState<ChartData>();
   const xRuns = 40;

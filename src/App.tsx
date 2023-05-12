@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import PieChart from "./components/PieChart";
 import { getTestCases } from "./api/sauce.api";
-import FlakinessTrend from "./components/FlakinessTrend";
+import FlakinessTrend from "./components/FlakinessTrend/FlakinessTrend";
 import { TestCases, TestCase, Error, TestStatuses } from "./types/Tests.type";
-import Table, { Order } from "./components/Table";
+import Table from "./components/Table/Table";
 import CollapsibleRow from "./components/CollapsibleRow";
+import { TableOrder } from "./components/Table/Table.props";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -30,14 +31,11 @@ function App() {
   const [flakinessData, setFlakinessData] = useState<TestCase[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
+  const [floatPanels, setFloatPanels] = useState(true);
 
-  const getTableResults = (tableResults: TestResults[]) => {
-    const results = tableResults?.map(result => result.name);
-    const filteredTests = sourceData?.filter(({ name }) => results?.includes(name));
-    if (filteredTests) {
-      setFlakinessData(filteredTests);
-    }
-  };
+  useEffect(() => {
+    initData();
+  }, []);
 
   const initData = async () => {
     setError(null);
@@ -71,19 +69,27 @@ function App() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    initData();
-  }, []);
+  const getTableResults = (tableResults: TestResults[]) => {
+    const results = tableResults?.map(result => result.name);
+    const filteredTests = sourceData?.filter(({ name }) => results?.includes(name));
+    if (filteredTests) {
+      setFlakinessData(filteredTests);
+    }
+  };
+
+  const handleFloatPanelsChange = () => {
+    setFloatPanels(!floatPanels);
+  }
 
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
-  const collapsibleStyle = "border border-1 p-2 rounded-lg";
+  const collapsibleStyle = 'bg-white border border-accent p-2 rounded-lg w-full';
 
   return (
     <div className="relative mx-auto">
-      <h1 className="p-3 text-2xl h-14 align-middle text-center bg-primary text-white font-bold">
+      <h1 className="p-3 text-2xl h-14 text-center bg-primary text-white font-bold">
         SauceLabs Stats
       </h1>
-      <div className="px-2 py-1 h-8 align-middle bg-slate-200 text-sm">
+      <div className="px-2 py-1 h-8 bg-slate-200 text-sm align-middle">
         {loading && <span className="text-primary">Loading data...</span>}
         {error && <span className="text-error mt-1 text-sm">{error}</span>}
         <button
@@ -92,8 +98,12 @@ function App() {
         >
           Reload
         </button>
+        <label className="float-right mx-5 mt-1">
+          <input className="mx-2" type="checkbox" checked={floatPanels} onChange={handleFloatPanelsChange} />
+          Float panels
+        </label>
       </div>
-      <div className="p-8">
+      <div className="px-8 py-4">
         {!loading && (
           <>
             <div className="grid grid-cols-3 gap-2">
@@ -102,11 +112,12 @@ function App() {
                 <CollapsibleRow
                   label="Results PieChart"
                   classes={collapsibleStyle}
+                  floatContent={floatPanels}
                   content={
                     <PieChart
                       statuses={chartData}
                       title="Total runs status"
-                      classes="p-12"
+                      classes="p-10"
                     />
                   }
                 />
@@ -116,6 +127,7 @@ function App() {
                 <CollapsibleRow
                   label="Flakiness Chart"
                   classes={collapsibleStyle}
+                  floatContent={floatPanels}
                   content={
                     <FlakinessTrend classes="p-5 text-center" data={flakinessData} />
                   }
@@ -123,12 +135,12 @@ function App() {
               </div>}
             </div>
             {/* Results Table */}
-            <div className="mt-10">
+            <div className="mt-4">
               {tableData && (
                 <Table
                   data={tableData}
                   title="Test Results"
-                  sort={{ column: "failed", order: Order.DESC }}
+                  sort={{ column: "failed", order: TableOrder.DESC }}
                   totalsRow="above"
                   filter={{
                     column: "name",
