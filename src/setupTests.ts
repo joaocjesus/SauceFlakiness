@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import ResizeObserver from 'resize-observer-polyfill';
+import "./log";
 
 const canvas = require('canvas');
 
@@ -9,4 +10,9 @@ Object.assign(window, {
   createImageData,
   Image,
   ResizeObserver
+});
+
+// include Logger in tests
+Object.assign(window, {
+  Logger
 });
