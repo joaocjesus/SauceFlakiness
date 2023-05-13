@@ -20,33 +20,20 @@ const Table = ({
   const [tableData, setTableData] = useState<KeyArray>(data || []);
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
-  const [sendTableData, setSendTableData] = useState(false);
 
   useEffect(() => {
     if (data) {
-      // Prevents sending data to parent component on initial render
-      setSendTableData(false);
       setHeaders(Object.keys(data[0]));
       setTableData([...data]);
     }
   }, [data]);
 
   useEffect(() => {
-    // Prevents sending data to parent component on sort
-    setSendTableData(false);
     const sortedData = sortData(tableData);
     if (sortedData) {
       setTableData(sortedData);
     }
   }, [columnSort]);
-
-  useEffect(() => {
-    if (getTableData && sendTableData) {
-      getTableData(tableData);
-      Logger.log("tableData", tableData);
-    }
-    setSendTableData(true);
-  }, [tableData]);
 
   useEffect(() => {
     const filterUpdate = setTimeout(() => filterData(), 500);
@@ -55,13 +42,13 @@ const Table = ({
 
   const filterData = () => {
     if (!data || !filter) return;
-
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = data.filter((row) =>
       row[filter.column].toLowerCase().includes(tableFilter.toLowerCase())
     );
 
     setTableData(filtered);
+    if (getTableData) getTableData(filtered);
   };
 
   const sortData = (sourceData: KeyArray) => {
