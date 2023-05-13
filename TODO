@@ -1,4 +1,0 @@
-1 - Name column without hover cursor
-2 - Default sort (Failed) being overriden (Desc => unknown)
-3 - Flakiness not updating immediatly when filtering table
-4 - Fix unit tests
