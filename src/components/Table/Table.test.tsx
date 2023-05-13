@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, fireEvent, screen, act } from "@testing-library/react";
 import { Table, TableOrder } from "components";
 
 describe("Table", () => {
@@ -35,15 +35,25 @@ describe("Table", () => {
     expect(screen.getByTestId("column-header-0")).toHaveClass("bg-red-500");
   });
 
-  it("filters data based on the input value", () => {
+  it("filters data based on the input value", async () => {
+    jest.useFakeTimers();
+
     render(<Table {...defaultProps} />);
     fireEvent.change(screen.getByTestId("filter-input"), {
       target: { value: "John" },
     });
+
+    // Advance timers by 500ms to account for the delay of updating the filter
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
     expect(defaultProps.getTableData).toHaveBeenCalledTimes(1);
     expect(defaultProps.getTableData).toHaveBeenCalledWith([
       { name: "John", age: 30, country: "USA" },
     ]);
+
+    jest.useRealTimers();
   });
 
   it("clears the filter input", () => {
