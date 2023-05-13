@@ -22,7 +22,7 @@ export interface TestResults {
 }
 
 function App() {
-  const [sourceData, setSourceData] = useState<TestCase[]>();
+  const [testCases, setTestCases] = useState<TestCases>();
   const [tableData, setTableData] = useState<TestResults[]>();
   const [filteredTable, setFilteredTable] = useState<TestResults[]>();
   const [chartData, setChartData] = useState<TestStatuses>();
@@ -31,25 +31,25 @@ function App() {
   const [error, setError] = useState<string | null>();
   const [floatPanels, setFloatPanels] = useState(true);
 
+  const fetchData = async () => {
+    setError(null);
+    setLoading(true);
+    const testCasesResults: TestCases = await getTestCases();
+    setLoading(false);
+
+    if (testCasesResults) {
+      setTestCases(testCasesResults);
+    } else {
+      setError(statusError("Error fetching data", testCasesResults));
+    }
+  };
+
   useEffect(() => {
-    initData();
+    fetchData();
   }, []);
 
   useEffect(() => {
-    const results = filteredTable?.map((result) => result.name);
-    const filteredTests = sourceData?.filter(({ name }) =>
-      results?.includes(name)
-    );
-    setFlakinessData(filteredTests);
-  }, [filteredTable]);
-
-  const initData = async () => {
-    setError(null);
-    setLoading(true);
-
-    const testCases: TestCases = await getTestCases();
-
-    if (testCases?.test_cases) {
+    if (testCases) {
       const filteredTable = testCases.test_cases.map((row) => ({
         name: row.name,
         passed: Number(row.statuses?.passed) || 0,
@@ -61,16 +61,18 @@ function App() {
       if (filteredTable) {
         setTableData(filteredTable);
       }
-      setSourceData(testCases.test_cases);
       setChartData(testCases.statuses);
       setFlakinessData(testCases.test_cases);
     }
+  }, [testCases]);
 
-    setLoading(false);
-    if (!testCases?.test_cases) {
-      setError(statusError("Error fetching data", testCases));
-    }
-  };
+  useEffect(() => {
+    const results = filteredTable?.map((result) => result.name);
+    const filteredTests = testCases?.test_cases?.filter(({ name }) =>
+      results?.includes(name)
+    );
+    setFlakinessData(filteredTests);
+  }, [filteredTable]);
 
   const handleFloatPanelsChange = () => {
     setFloatPanels(!floatPanels);
@@ -90,7 +92,7 @@ function App() {
         {error && <span className="text-error mt-1 text-sm">{error}</span>}
         <button
           className="btn btn-primary btn-xs float-right"
-          onClick={initData}
+          onClick={fetchData}
         >
           Reload
         </button>

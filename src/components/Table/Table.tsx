@@ -14,7 +14,7 @@ const Table = ({
 }: TableProps) => {
 
 
-  const [testNameFilter, setTestNameFilter] = useState<string>("");
+  const [tableFilter, setTableFilter] = useState<string>("");
   const [tableData, setTableData] = useState<KeyArray>(data || []);
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>();
@@ -29,7 +29,6 @@ const Table = ({
       setColumnSort(sort || defaultSort);
       setTableData([...data]);
     }
-
   }, [data]);
 
   useEffect(() => {
@@ -40,29 +39,26 @@ const Table = ({
   }, [columnSort]);
 
   useEffect(() => {
-    const filterUpdate = setTimeout(() => filterData(), 500);
-    return () => clearTimeout(filterUpdate);
-  }, [testNameFilter]);
-
-  useEffect(() => {
     if (getTableData) {
       getTableData(tableData);
     }
-  }, [tableData, getTableData]);
+    Logger.log("Table data updated", tableData);
+  }, [tableData]);
+
+  useEffect(() => {
+    const filterUpdate = setTimeout(() => filterData(), 500);
+    return () => clearTimeout(filterUpdate);
+  }, [tableFilter]);
 
   const filterData = () => {
-    if (data === undefined) return;
-
-    const sourceData = [...data];
+    if (!data || !filter) return;
 
     // Filter rows based on column value, if <filter> parameter was specified
-    const filtered = filter
-      ? sourceData.filter((row) =>
-        row[filter.column]
-          .toLowerCase()
-          .includes(testNameFilter.toLowerCase())
-      )
-      : sourceData;
+    const filtered = data.filter((row) =>
+      row[filter.column]
+        .toLowerCase()
+        .includes(tableFilter.toLowerCase())
+    );
 
     setTableData(filtered);
   };
@@ -103,12 +99,12 @@ const Table = ({
   const handleFilterChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
     if (!Number.isNaN(value)) {
-      setTestNameFilter(value);
+      setTableFilter(value);
     }
   };
 
   const clearFilter = () => {
-    setTestNameFilter("");
+    setTableFilter("");
   };
 
   return (
@@ -127,7 +123,7 @@ const Table = ({
                 type="text"
                 id="filter-input"
                 data-testid="filter-input"
-                value={testNameFilter}
+                value={tableFilter}
                 onChange={handleFilterChange}
                 className="input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2 w-96"
               />
@@ -144,7 +140,7 @@ const Table = ({
                     Showing {tableData.length} results.
                   </span>
                 )}
-                {testNameFilter.length > 0 && tableData.length === 0 && (
+                {tableFilter && tableData.length === 0 && (
                   <span className="text-sm text-error">
                     No data found! Maybe try changing the filter.
                   </span>

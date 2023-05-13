@@ -13,13 +13,7 @@ interface PieChartProps {
   height?: number;
 }
 
-const PieChart = ({
-  statuses,
-  title,
-  classes,
-  width,
-  height,
-}: PieChartProps) => {
+const PieChart = ({ statuses, title, classes }: PieChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
