@@ -50,7 +50,7 @@ function App() {
 
   useEffect(() => {
     if (testCases) {
-      const filteredTable = testCases.test_cases.map((row) => ({
+      const filtered = testCases.test_cases.map((row) => ({
         name: row.name,
         passed: Number(row.statuses?.passed) || 0,
         failed: Number(row.statuses?.failed) || 0,
@@ -58,8 +58,8 @@ function App() {
         complete: Number(row.statuses?.complete) || 0,
         total_runs: Number(row.total_runs),
       }));
-      if (filteredTable) {
-        setTableData(filteredTable);
+      if (filtered) {
+        setTableData(filtered);
       }
       setChartData(testCases.statuses);
       setFlakinessData(testCases.test_cases);
