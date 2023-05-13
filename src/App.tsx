@@ -139,7 +139,7 @@ function App() {
                     floatContent={floatPanels}
                     content={
                       <FlakinessTrend
-                        classes="p-5 text-center"
+                        classes="p-5 text-center h-[540px]"
                         data={flakinessData}
                       />
                     }
