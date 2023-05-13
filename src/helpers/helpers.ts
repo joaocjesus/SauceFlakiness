@@ -36,7 +36,7 @@ export const getEmptyValues = (params: object) => {
     const empty: string[] = [];
     Object.entries(params).forEach((param) => {
         const [key, value] = param;
-        if (value === null || value == '') {
+        if (value === null || value === '') {
             empty.push(key);
         }
     });
@@ -48,7 +48,7 @@ export const throwErrorIfAnyEmpty = (params: object) => {
     const empty: string[] = [];
     Object.entries(params).forEach((param) => {
         const [key, value] = param;
-        if (value === null || value == '') {
+        if (value === null || value === '') {
             empty.push(key);
         }
     });
