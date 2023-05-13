@@ -12,23 +12,31 @@ const Table = ({
   getTableData,
   headerStyle,
 }: TableProps) => {
-  const defaultSort = {
-    column: Object.keys(data[0])[0],
-    order: TableOrder.ASC,
-  };
+
 
   const [testNameFilter, setTestNameFilter] = useState<string>("");
-  const [tableData, setTableData] = useState<KeyArray>([...data]);
+  const [tableData, setTableData] = useState<KeyArray>(data || []);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
+  const [columnSort, setColumnSort] = useState<SortProps>();
 
   useEffect(() => {
-    setHeaders(Object.keys(data[0]));
-  }, []);
+    if (data) {
+      const defaultSort = {
+        column: Object.keys(data[0])[0],
+        order: TableOrder.ASC,
+      };
+      setHeaders(Object.keys(data[0]));
+      setColumnSort(sort || defaultSort);
+      setTableData([...data]);
+    }
+
+  }, [data]);
 
   useEffect(() => {
-    const sortedData = sortData(tableData);
-    setTableData(sortedData || tableData);
+    if (tableData) {
+      const sortedData = sortData(tableData);
+      setTableData(sortedData || tableData);
+    }
   }, [columnSort]);
 
   useEffect(() => {
@@ -40,25 +48,27 @@ const Table = ({
     if (getTableData) {
       getTableData(tableData);
     }
-  }, [tableData]);
+  }, [tableData, getTableData]);
 
   const filterData = () => {
+    if (data === undefined) return;
+
     const sourceData = [...data];
 
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = filter
       ? sourceData.filter((row) =>
-          row[filter.column]
-            .toLowerCase()
-            .includes(testNameFilter.toLowerCase())
-        )
+        row[filter.column]
+          .toLowerCase()
+          .includes(testNameFilter.toLowerCase())
+      )
       : sourceData;
 
     setTableData(filtered);
   };
 
   const sortData = (sourceData: KeyArray) => {
-    if (!sourceData || sourceData.length === 0) return;
+    if (!sourceData || sourceData.length === 0 || !columnSort) return;
 
     let { column, order } = columnSort;
 
@@ -74,14 +84,19 @@ const Table = ({
 
   const renderTotals = () => (
     <tr className="bg-accent">
-      {headers.map((header, index) => (
+      {totalsRow && tableData.length > 0 && Object.keys(tableData[0]).map((header, index) => (
         <td key={index}>
           {index === 0 && "Totals"}
-          {totalsRow && typeof data[0][header] === "number"
-            ? data.reduce((sum, row) => sum + Number(row[header]), 0)
+          {typeof tableData[0][header] === "number"
+            ? tableData.reduce((sum, row) => sum + Number(row[header]), 0)
             : ""}
         </td>
       ))}
+      {totalsRow && tableData?.length === 0 && (
+        <td colSpan={headers.length} className="text-sm">
+          No records to display!
+        </td>
+      )}
     </tr>
   );
 
@@ -141,7 +156,7 @@ const Table = ({
             <table className="w-full table-compact">
               <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
-                  {headers.map((header, index) => (
+                  {headers && headers.map((header, index) => (
                     <ColumnHeader
                       key={index}
                       header={header}

@@ -17,7 +17,7 @@ interface HeaderStyleProps {
 }
 
 interface TableProps {
-    data: KeyArray;
+    data?: KeyArray;
     title?: string;
     sort?: SortProps;
     totalsRow?: "above" | "below";

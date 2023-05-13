@@ -149,20 +149,18 @@ function App() {
             </div>
             {/* Results Table */}
             <div className="mt-4">
-              {tableData && (
-                <Table
-                  data={tableData}
-                  title="Test Results"
-                  sort={{ column: "failed", order: TableOrder.DESC }}
-                  totalsRow="above"
-                  filter={{
-                    column: "name",
-                    inputLabel: "Filter by test name:",
-                  }}
-                  getTableData={getTableResults}
-                  headerStyle={tableStyles}
-                />
-              )}
+              <Table
+                data={tableData}
+                title="Test Results"
+                sort={{ column: "failed", order: TableOrder.DESC }}
+                totalsRow="above"
+                filter={{
+                  column: "name",
+                  inputLabel: "Filter by test name:",
+                }}
+                getTableData={getTableResults}
+                headerStyle={tableStyles}
+              />
             </div>
           </>
         )}

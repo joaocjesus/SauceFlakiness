@@ -4,7 +4,7 @@ import { HeaderStyleProps, TableOrder } from "./Table.props";
 interface ColumnHeaderProps {
   index: number;
   header: string;
-  columnSort: { order: TableOrder; column: string };
+  columnSort?: { order: TableOrder; column: string };
   setColumnSort: Function;
   headerStyle?: HeaderStyleProps[];
 }
@@ -56,7 +56,7 @@ const ColumnHeader = ({
   headerStyle,
 }: ColumnHeaderProps) => {
   const defaultSort =
-    columnSort.column === header ? columnSort.order : TableOrder.ASC;
+    columnSort?.column === header ? columnSort.order : TableOrder.ASC;
   const [hover, setHover] = useState(false);
   const [sort, setSort] = useState(defaultSort);
 

@@ -55,7 +55,7 @@ const FlakinessTrend = ({
         ),
         datasets: aggregatedResults?.aggregatedTrends
           ? Object.entries(aggregatedResults.aggregatedTrends).map((item) => ({
-              label: "",
+              label: item[0],
               data: item[1] || [],
               borderColor: "rgba(40,80,120,1)",
               borderWidth: 2,
