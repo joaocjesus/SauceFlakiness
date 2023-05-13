@@ -7,7 +7,7 @@ import "chart.js/auto";
 import {
   calculateAggregateTrend,
   calculateFlakinessTrend,
-} from "../../helpers/flakiness";
+} from "helpers/flakiness";
 
 const FlakinessTrend = ({
   data,
@@ -28,19 +28,20 @@ const FlakinessTrend = ({
 
   useEffect(() => {
     setTestData(data);
-
-    const trend = calculateFlakinessTrend(data, xRuns);
-    setFlakinessTrend(trend);
-
-    const aggregatedObject = calculateAggregateTrend(trend);
-    setAggregatedResults(aggregatedObject);
-
-    const chartDataObj = getChartData();
-    setChartData(chartDataObj);
-
-    const aggregateChartDataObj = getAggregateChartData();
-    setAggregateChartData(aggregateChartDataObj);
   }, [data]);
+
+  useEffect(() => {
+    setFlakinessTrend(calculateFlakinessTrend(data, xRuns));
+  }, [testData]);
+
+  useEffect(() => {
+    setChartData(getChartData());
+    setAggregatedResults(calculateAggregateTrend(flakinessTrend));
+  }, [flakinessTrend]);
+
+  useEffect(() => {
+    setAggregateChartData(getAggregateChartData());
+  }, [aggregatedResults]);
 
   const toggleDisplay = () => {
     setShowAggregate(!showAggregate);

@@ -24,6 +24,7 @@ export interface TestResults {
 function App() {
   const [sourceData, setSourceData] = useState<TestCase[]>();
   const [tableData, setTableData] = useState<TestResults[]>();
+  const [filteredTable, setFilteredTable] = useState<TestResults[]>();
   const [chartData, setChartData] = useState<TestStatuses>();
   const [flakinessData, setFlakinessData] = useState<TestCase[]>();
   const [loading, setLoading] = useState(false);
@@ -34,13 +35,17 @@ function App() {
     initData();
   }, []);
 
+  useEffect(() => {
+    const results = filteredTable?.map((result) => result.name);
+    const filteredTests = sourceData?.filter(({ name }) =>
+      results?.includes(name)
+    );
+    setFlakinessData(filteredTests);
+  }, [filteredTable]);
+
   const initData = async () => {
     setError(null);
     setLoading(true);
-
-    setTableData(undefined);
-    setChartData(undefined);
-    setFlakinessData(undefined);
 
     const testCases: TestCases = await getTestCases();
 
@@ -64,16 +69,6 @@ function App() {
     setLoading(false);
     if (!testCases?.test_cases) {
       setError(statusError("Error fetching data", testCases));
-    }
-  };
-
-  const getTableResults = (tableResults: TestResults[]) => {
-    const results = tableResults?.map((result) => result.name);
-    const filteredTests = sourceData?.filter(({ name }) =>
-      results?.includes(name)
-    );
-    if (filteredTests) {
-      setFlakinessData(filteredTests);
     }
   };
 
@@ -158,7 +153,7 @@ function App() {
                   column: "name",
                   inputLabel: "Filter by test name:",
                 }}
-                getTableData={getTableResults}
+                getTableData={setFilteredTable}
                 headerStyle={tableStyles}
               />
             </div>
