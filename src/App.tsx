@@ -29,7 +29,10 @@ function App() {
   const [flakinessData, setFlakinessData] = useState<TestCase[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [floatPanels, setFloatPanels] = useState(true);
+  // Read floatPanels from localStorage
+  const [floatPanels, setFloatPanels] = useState<boolean>(
+    JSON.parse(localStorage.getItem("floatPanels") || "false")
+  );
 
   const fetchData = async () => {
     setError(null);
@@ -75,6 +78,8 @@ function App() {
   }, [filteredTable]);
 
   const handleFloatPanelsChange = () => {
+    // Save floatPanels to localStorage
+    localStorage.setItem("floatPanels", JSON.stringify(!floatPanels));
     setFloatPanels(!floatPanels);
   };
 
