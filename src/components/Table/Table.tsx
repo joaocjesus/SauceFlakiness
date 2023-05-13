@@ -12,37 +12,40 @@ const Table = ({
   getTableData,
   headerStyle,
 }: TableProps) => {
-
-
+  const defaultSort = {
+    column: data ? Object.keys(data[0])[0] : "",
+    order: TableOrder.ASC,
+  };
   const [tableFilter, setTableFilter] = useState<string>("");
   const [tableData, setTableData] = useState<KeyArray>(data || []);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [columnSort, setColumnSort] = useState<SortProps>();
+  const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
+  const [sendTableData, setSendTableData] = useState(false);
 
   useEffect(() => {
     if (data) {
-      const defaultSort = {
-        column: Object.keys(data[0])[0],
-        order: TableOrder.ASC,
-      };
+      // Prevents sending data to parent component on initial render
+      setSendTableData(false);
       setHeaders(Object.keys(data[0]));
-      setColumnSort(sort || defaultSort);
       setTableData([...data]);
     }
   }, [data]);
 
   useEffect(() => {
-    if (tableData) {
-      const sortedData = sortData(tableData);
-      setTableData(sortedData || tableData);
+    // Prevents sending data to parent component on sort
+    setSendTableData(false);
+    const sortedData = sortData(tableData);
+    if (sortedData) {
+      setTableData(sortedData);
     }
   }, [columnSort]);
 
   useEffect(() => {
-    if (getTableData) {
+    if (getTableData && sendTableData) {
       getTableData(tableData);
+      Logger.log("tableData", tableData);
     }
-    Logger.log("Table data updated", tableData);
+    setSendTableData(true);
   }, [tableData]);
 
   useEffect(() => {
@@ -55,9 +58,7 @@ const Table = ({
 
     // Filter rows based on column value, if <filter> parameter was specified
     const filtered = data.filter((row) =>
-      row[filter.column]
-        .toLowerCase()
-        .includes(tableFilter.toLowerCase())
+      row[filter.column].toLowerCase().includes(tableFilter.toLowerCase())
     );
 
     setTableData(filtered);
@@ -80,14 +81,16 @@ const Table = ({
 
   const renderTotals = () => (
     <tr className="bg-accent">
-      {totalsRow && tableData.length > 0 && Object.keys(tableData[0]).map((header, index) => (
-        <td key={index}>
-          {index === 0 && "Totals"}
-          {typeof tableData[0][header] === "number"
-            ? tableData.reduce((sum, row) => sum + Number(row[header]), 0)
-            : ""}
-        </td>
-      ))}
+      {totalsRow &&
+        tableData.length > 0 &&
+        Object.keys(tableData[0]).map((header, index) => (
+          <td key={index}>
+            {index === 0 && "Totals"}
+            {typeof tableData[0][header] === "number"
+              ? tableData.reduce((sum, row) => sum + Number(row[header]), 0)
+              : ""}
+          </td>
+        ))}
       {totalsRow && tableData?.length === 0 && (
         <td colSpan={headers.length} className="text-sm">
           No records to display!
@@ -152,16 +155,17 @@ const Table = ({
             <table className="w-full table-compact">
               <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
                 <tr>
-                  {headers && headers.map((header, index) => (
-                    <ColumnHeader
-                      key={index}
-                      header={header}
-                      index={index}
-                      columnSort={columnSort}
-                      setColumnSort={setColumnSort}
-                      headerStyle={headerStyle}
-                    />
-                  ))}
+                  {headers &&
+                    headers.map((header, index) => (
+                      <ColumnHeader
+                        key={index}
+                        header={header}
+                        index={index}
+                        columnSort={columnSort}
+                        setColumnSort={setColumnSort}
+                        headerStyle={headerStyle}
+                      />
+                    ))}
                 </tr>
                 {totalsRow === "above" && renderTotals()}
               </thead>

@@ -40,7 +40,6 @@ const sampleData: TestCase[] = [
 describe("FlakinessTrend", () => {
   test("renders the component correctly", () => {
     render(<FlakinessTrend data={sampleData} />);
-    console.log("FlakinessTrend", screen.debug());
     expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("button")).toBeInTheDocument();
   });
