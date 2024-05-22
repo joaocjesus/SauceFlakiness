@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { sortArray } from "../../helpers/helpers";
 import { ColumnHeader } from "./ColumnHeader";
-import { TableOrder, SortProps, TableProps, KeyArray } from "./Table.props";
+import { TableOrder, SortProps, ResultsProps, KeyArray } from "./Results.props";
 
-const Table = ({
+const TestCasesResults = ({
   data,
   title,
   sort,
@@ -11,7 +11,7 @@ const Table = ({
   filter,
   getTableData,
   headerStyle,
-}: TableProps) => {
+}: ResultsProps) => {
   const defaultSort = ({
     column: Object.keys(data[0])[0],
     order: TableOrder.ASC,
@@ -24,7 +24,7 @@ const Table = ({
 
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     const sortedData = sortData(tableData);
@@ -173,4 +173,4 @@ const Table = ({
   );
 };
 
-export default Table;
+export default TestCasesResults;

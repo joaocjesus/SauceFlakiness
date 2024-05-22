@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HeaderStyleProps, TableOrder } from "./Table.props";
+import { HeaderStyleProps, TableOrder } from "./Results.props";
 
 interface ColumnHeaderProps {
     index: number,
