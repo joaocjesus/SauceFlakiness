@@ -26,6 +26,7 @@ interface ResultsProps {
     headerStyle?: HeaderStyleProps[];
     rowsQuantity?: string;
     onRowsChange?: Function;
+    onRowClick?: Function;
 }
 
 export { TableOrder };

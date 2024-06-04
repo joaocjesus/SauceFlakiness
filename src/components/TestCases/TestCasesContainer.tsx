@@ -5,6 +5,9 @@ import TestCasesResults from "./TestCasesResults";
 import { TableOrder } from "./Results.props";
 import { ResultsChart } from "../Charts/ResultsChart";
 import { FlakinessChart } from "../Charts/FlakinessChart";
+import { InfoPanel } from "../InfoPanel";
+import { toPascalCase } from "../../helpers/helpers";
+import { Paper, Table, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 const statusError = (title: string, result?: TestCases | Error): string => {
   let error;
@@ -21,17 +24,24 @@ export interface TestResults {
   error?: number;
   complete?: number;
   total_runs: number;
+  avg_duration: string;
+  complete_rate: string;
+  error_rate: string;
+  fail_rate: string;
+  pass_rate: string;
 }
 
 export const TestCasesContainer = () => {
   const [sourceData, setSourceData] = useState<TestCase[]>();
-  const [tableData, setTableData] = useState<TestResults[]>();
+  const [tableData, setTableData] = useState<Partial<TestResults>[]>();
   const [chartData, setChartData] = useState<TestStatuses>();
   const [flakinessData, setFlakinessData] = useState<TestCase[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
   const [floatPanels, setFloatPanels] = useState(true);
   const [testQuantity, setTestQuantity] = useState('5000');
+  const [infoPanelVisible, setInfoPanelVisible] = useState(false);
+  const [testDetails, setTestDetails] = useState<TestResults>();
 
   useEffect(() => {
     fetchTests();
@@ -40,6 +50,10 @@ export const TestCasesContainer = () => {
   useEffect(() => {
     fetchTests();
   }, [testQuantity]);
+
+  useEffect(() => {
+
+  }, [testDetails]);
 
   const fetchTests = async () => {
     setError(null);
@@ -60,6 +74,7 @@ export const TestCasesContainer = () => {
         complete: Number(row.statuses?.complete) || 0,
         total_runs: Number(row.total_runs),
       }));
+
       if (filteredTable) {
         setTableData(filteredTable);
       }
@@ -81,12 +96,45 @@ export const TestCasesContainer = () => {
     }
   };
 
+  const getTestCase = (testCaseName: string) => {
+    return sourceData?.find(({ name }) => name === testCaseName)
+  }
+
   const handleFloatPanelsChange = () => {
     setFloatPanels(!floatPanels);
   }
 
   const handleTestQuantityChange = (quantity: string) => {
     setTestQuantity(quantity);
+  }
+
+  const handleInfoPanelOnClose = () => {
+    setInfoPanelVisible(false);
+  }
+
+  const prettifyProp = (prop: string) => {
+    return toPascalCase(prop.replace(/_/g, ' '));
+  }
+
+  const handleRowClick = (test: string) => {
+    const testCaseData = getTestCase(test);
+    if (testCaseData) {
+      const details = {
+        name: testCaseData.name,
+        passed: testCaseData.statuses?.passed || 0,
+        failed: testCaseData.statuses?.failed || 0,
+        error: testCaseData.statuses?.error || 0,
+        complete: testCaseData.statuses?.complete || 0,
+        total_runs: testCaseData.total_runs || 0,
+        avg_duration: (testCaseData.avg_duration || 0).toFixed(0) + 's',
+        complete_rate: (testCaseData.complete_rate * 100 || 0).toFixed(2) + '%',
+        error_rate: (testCaseData.error_rate * 100 || 0).toFixed(2) + '%',
+        fail_rate: (testCaseData.fail_rate * 100 || 0).toFixed(2) + '%',
+        pass_rate: (testCaseData.pass_rate * 100 || 0).toFixed(2) + '%',
+      }
+      setTestDetails(details);
+      setInfoPanelVisible(true);
+    }
   }
 
   const tableStyles = [{ name: "Name", style: "w-4/6 p-2" }];
@@ -132,12 +180,30 @@ export const TestCasesContainer = () => {
                   headerStyle={tableStyles}
                   rowsQuantity={testQuantity}
                   onRowsChange={handleTestQuantityChange}
+                  onRowClick={handleRowClick}
                 />
               )}
             </div>
+            {infoPanelVisible && <InfoPanel
+              open={infoPanelVisible}
+              onClose={handleInfoPanelOnClose}
+              title='Testcase Details'
+            >
+              <TableContainer component={Paper}>
+                {testDetails && <Table sx={{minWidth: 400}}>
+                  {Object.entries(testDetails).map(item => (
+                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }}} className="border">
+                      <TableCell sx={{fontWeight: 'bold', width: 150 }} component="th" scope="row">{prettifyProp(item[0])}</TableCell>
+                      <TableCell scope="row" className="font-light">{item[1]}</TableCell>
+                    </TableRow>
+                  ))}
+                </Table>}
+                {!testDetails && <div>No details?</div>}
+              </TableContainer>
+            </InfoPanel>}
           </>
         )}
-        {loading && <span>Maybe loading data?!</span>}
+        {loading && <span>Loading data!</span>}
       </div>
     </div>
   );

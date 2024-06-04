@@ -31,6 +31,12 @@ export const sortArray = ({ array, column, order = 'asc' }: SortProps): Obj[] =>
     return sorted;
 };
 
+export const toPascalCase = (str: string, ignoreSpaces = true) => {
+    return str
+        .replace(/\s(.)/g, (a) => a.toUpperCase())
+        .replace(/\s/g, ignoreSpaces ? ' ' : '')
+        .replace(/^(.)/, (b) => b.toUpperCase());
+}
 
 export const getEmptyValues = (params: object) => {
     const empty: string[] = [];

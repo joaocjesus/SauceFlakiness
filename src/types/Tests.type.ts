@@ -15,6 +15,7 @@ export interface TestCase {
   avg_duration: number;
   median_duration: number;
   total_duration: number;
+  complete_rate: number;
 }
 
 export interface TestStatuses {

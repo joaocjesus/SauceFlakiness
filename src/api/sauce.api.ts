@@ -30,7 +30,7 @@ export const getRequest = async (queryParameters: Record<string, string>) => {
       return require('./testcases.json');
     }
 
-    Logger.log('Request: ', request)
+    // Logger.log('Request: ', request)
 
     const response = await fetch(request, {
       method: 'GET',
@@ -42,10 +42,10 @@ export const getRequest = async (queryParameters: Record<string, string>) => {
       redirect: 'follow',
     });
 
-    Logger.log('Response: ', response);
+    // Logger.log('Response: ', response);
 
     const data = await response.json();
-    Logger.log('Data: ', data);
+    // Logger.log('Data: ', data);
     return data;
   } catch (err) {
     Logger.error(err);

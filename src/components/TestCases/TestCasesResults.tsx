@@ -3,6 +3,8 @@ import { sortArray } from "../../helpers/helpers";
 import { ColumnHeader } from "./ColumnHeader";
 import { TableOrder, SortProps, ResultsProps, KeyArray } from "./Results.props";
 import { TextFieldWithButton } from "../TextFieldWithButton";
+import { InfoPanel } from "../InfoPanel";
+
 
 const inputStyles = "input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2";
 
@@ -16,6 +18,7 @@ const TestCasesResults = ({
   headerStyle,
   rowsQuantity,
   onRowsChange,
+  onRowClick,
 }: ResultsProps) => {
   const defaultSort = ({
     column: Object.keys(data[0])[0],
@@ -106,14 +109,21 @@ const TestCasesResults = ({
 
   const clearFilter = () => {
     setTestNameFilter("");
-  }
+  };
 
   const handleTestQuantityChange = (quantity: string) => {
     setRowsLengthQuantity(quantity);
-  }
+  };
+
+  const handleTestRowClick = (e: any) => {
+    if (onRowClick) {
+      onRowClick(e.target.innerText)
+    }
+  };
 
   return (
     <div className="mt-5 border border-accent rounded-lg p-3">
+      {/* <InfoPanel visible={infoPanelVisible} /> */}
       {title && (
         <div className="text-center text-primary font-bold text-2xl">
           {title}
@@ -162,7 +172,7 @@ const TestCasesResults = ({
               <thead className="bg-secondary text-primary text-sm h-10 text-left sticky top-0">
                 <tr>
                   {headers.map((header, index) => <ColumnHeader
-                  key={index}
+                    key={index}
                     header={header}
                     index={index}
                     columnSort={columnSort}
@@ -178,9 +188,10 @@ const TestCasesResults = ({
                   <tr
                     key={`row-${rowIndex}`}
                     className="odd:bg-accent odd:bg-opacity-20 hover:bg-accent hover:bg-opacity-30"
+                    onClick={handleTestRowClick}
                   >
                     {headers.map((header, index) => (
-                     <td className="px-2 py-1.5" key={`row-${rowIndex}-${index}`}>{row[header]}</td>
+                      <td className="px-2 py-1.5" key={`row-${rowIndex}-${index}`}>{row[header]}</td>
                     ))}
                   </tr>
                 ))}
