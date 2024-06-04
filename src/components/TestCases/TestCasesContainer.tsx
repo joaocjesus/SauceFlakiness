@@ -89,7 +89,7 @@ export const TestCasesContainer = () => {
     setTestQuantity(quantity);
   }
 
-  const tableStyles = [{ name: "Name", style: "w-4/6" }];
+  const tableStyles = [{ name: "Name", style: "w-4/6 p-2" }];
 
   return (
     <div className="relative mx-auto">
