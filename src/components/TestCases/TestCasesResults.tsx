@@ -3,8 +3,6 @@ import { sortArray } from "../../helpers/helpers";
 import { ColumnHeader } from "./ColumnHeader";
 import { TableOrder, SortProps, ResultsProps, KeyArray } from "./Results.props";
 import { TextFieldWithButton } from "../TextFieldWithButton";
-import { InfoPanel } from "../InfoPanel";
-
 
 const inputStyles = "input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2";
 

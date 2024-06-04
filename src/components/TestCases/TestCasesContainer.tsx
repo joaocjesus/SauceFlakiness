@@ -156,54 +156,49 @@ export const TestCasesContainer = () => {
         </label>
       </div>
       <div className="px-8 py-4">
-        {!loading && (
-          <>
-            {/* Charts */}
-            <div className="grid grid-cols-3 gap-2">
-              <ResultsChart chartData={chartData} float={floatPanels} />
-              <FlakinessChart flakinessData={flakinessData} float={floatPanels} />
-            </div>
+        {/* Charts */}
+        <div className="grid grid-cols-3 gap-2">
+          <ResultsChart chartData={chartData} float={floatPanels} />
+          <FlakinessChart flakinessData={flakinessData} float={floatPanels} />
+        </div>
 
-            {/* Results */}
-            <div className="mt-4">
-              {tableData && (
-                <TestCasesResults
-                  data={tableData}
-                  title="Test Results"
-                  sort={{ column: "failed", order: TableOrder.DESC }}
-                  totalsRow="above"
-                  filter={{
-                    column: "name",
-                    inputLabel: "Filter by test name:",
-                  }}
-                  getTableData={getTableResults}
-                  headerStyle={tableStyles}
-                  rowsQuantity={testQuantity}
-                  onRowsChange={handleTestQuantityChange}
-                  onRowClick={handleRowClick}
-                />
-              )}
-            </div>
-            {infoPanelVisible && <InfoPanel
-              open={infoPanelVisible}
-              onClose={handleInfoPanelOnClose}
-              title='Testcase Details'
-            >
-              <TableContainer component={Paper}>
-                {testDetails && <Table sx={{minWidth: 400}}>
-                  {Object.entries(testDetails).map(item => (
-                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }}} className="border">
-                      <TableCell sx={{fontWeight: 'bold', width: 150 }} component="th" scope="row">{prettifyProp(item[0])}</TableCell>
-                      <TableCell scope="row" className="font-light">{item[1]}</TableCell>
-                    </TableRow>
-                  ))}
-                </Table>}
-                {!testDetails && <div>No details?</div>}
-              </TableContainer>
-            </InfoPanel>}
-          </>
-        )}
-        {loading && <span>Loading data!</span>}
+        {/* Results */}
+        <div className="mt-4">
+          {tableData && (
+            <TestCasesResults
+              data={tableData}
+              title="Test Results"
+              sort={{ column: "failed", order: TableOrder.DESC }}
+              totalsRow="above"
+              filter={{
+                column: "name",
+                inputLabel: "Filter by test name:",
+              }}
+              getTableData={getTableResults}
+              headerStyle={tableStyles}
+              rowsQuantity={testQuantity}
+              onRowsChange={handleTestQuantityChange}
+              onRowClick={handleRowClick}
+            />
+          )}
+        </div>
+        {infoPanelVisible && <InfoPanel
+          open={infoPanelVisible}
+          onClose={handleInfoPanelOnClose}
+          title='Testcase Details'
+        >
+          <TableContainer component={Paper}>
+            {testDetails && <Table sx={{ minWidth: 400 }}>
+              {Object.entries(testDetails).map(item => (
+                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} className="border">
+                  <TableCell sx={{ fontWeight: 'bold', width: 150 }} component="th" scope="row">{prettifyProp(item[0])}</TableCell>
+                  <TableCell scope="row" className="font-light">{item[1]}</TableCell>
+                </TableRow>
+              ))}
+            </Table>}
+            {!testDetails && <div>No details?</div>}
+          </TableContainer>
+        </InfoPanel>}
       </div>
     </div>
   );

@@ -12,15 +12,16 @@ interface Props {
 export const FlakinessChart = ({ flakinessData, float }: Props) => {
   return <>
     {/* Flakiness trends */}
-    {flakinessData && <div className="col-span-2">
+    <div className="col-span-2">
       <CollapsibleRow
         label="Flakiness Chart"
         classes={collapsibleStyle}
         floatContent={float}
-        content={
+        disabled={!flakinessData}
+        content={flakinessData &&
           <FlakinessTrend classes="p-5 text-center" data={flakinessData} />
         }
       />
-    </div>}
+    </div>
   </>
 }

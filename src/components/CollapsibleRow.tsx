@@ -5,6 +5,7 @@ interface CollapsibleRowProps {
   content: React.ReactNode;
   floatContent?: boolean;
   classes?: string;
+  disabled?: boolean;
 }
 
 const COLLAPSIBLE_ROW_CLASS = 'collapsible-row';
@@ -13,6 +14,7 @@ const CollapsibleRow = ({
   label,
   content,
   floatContent,
+  disabled,
   classes,
 }: CollapsibleRowProps) => {
   // Define a state variable to track whether the row is expanded or collapsed
@@ -52,13 +54,14 @@ const CollapsibleRow = ({
       <div className={`${classes} ${floatContent ? 'absolute z-10' : ''}`}>
         <button
           onClick={handleToggle}
+          disabled={disabled}
           className={`btn btn-sm w-full ${isExpanded ? "btn-secondary" : "btn-primary"}`}>
           {label}
         </button>
         <div className={isExpanded ? "" : "hidden"}>{content}</div>
       </div>
     </div>
-    </>
+  </>
   );
 };
 
