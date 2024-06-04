@@ -13,15 +13,15 @@ const {
 const ENDPOINT = `${API_URL}${TESTS_ENDPOINT}`;
 const encodedAuthString = (Buffer.from(`${USERNAME}:${PASSWORD}`).toString('base64'));
 
-export const getTestCases = async (limit?: string) => {
+export const getTestCases = async (limit = '5000') => getRequest({ limit });
 
+export const getRequest = async (queryParameters: Record<string, string>) => {
   throwErrorIfAnyEmpty({ USERNAME, PASSWORD, ORG_ID, API_URL, ENDPOINT, TESTS_ENDPOINT });
-  
   try {
     const request = new URL(ENDPOINT);
     const params = new URLSearchParams({
       org_id: ORG_ID || '',
-      limit: limit || '5000',
+      ...queryParameters,
     });
 
     request.search = params.toString();
@@ -34,9 +34,7 @@ export const getTestCases = async (limit?: string) => {
 
     const response = await fetch(request, {
       method: 'GET',
-      mode: "cors",
       cache: "no-cache",
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Basic ${encodedAuthString}`,
@@ -45,8 +43,11 @@ export const getTestCases = async (limit?: string) => {
     });
 
     Logger.log('Response: ', response);
-    return response.json();
+
+    const data = await response.json();
+    Logger.log('Data: ', data);
+    return data;
   } catch (err) {
     Logger.error(err);
   }
-};
+}

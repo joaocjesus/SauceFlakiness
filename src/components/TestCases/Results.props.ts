@@ -16,7 +16,7 @@ interface HeaderStyleProps {
     style: string;
 }
 
-interface TableProps {
+interface ResultsProps {
     data: KeyArray;
     title?: string;
     sort?: SortProps;
@@ -29,4 +29,4 @@ interface TableProps {
 }
 
 export { TableOrder };
-export type { SortProps, HeaderStyleProps, TableProps, KeyArray };
+export type { SortProps, HeaderStyleProps, ResultsProps, KeyArray };

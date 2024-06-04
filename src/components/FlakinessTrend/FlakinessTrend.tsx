@@ -5,8 +5,6 @@ import { AggregatedData, ChartData, KeyNumArray } from "./FlakinessTrend.props";
 
 import "chart.js/auto";
 
-
-
 const calculateFlakinessTrend = (
   data: TestCase[],
   xRuns: number
@@ -38,8 +36,6 @@ const calculateFlakinessTrend = (
       // Add the flakiness percentage to the flakinessData array.
       flakinessData.push(flakinessPercentage);
     }
-
-
 
     // Store the flakiness data for the current test case in the flakinessTrend object.
     flakinessTrend[testCase.name] = flakinessData;
