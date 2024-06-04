@@ -31,12 +31,17 @@ export const TestCasesContainer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
   const [floatPanels, setFloatPanels] = useState(true);
+  const [testQuantity, setTestQuantity] = useState('5000');
 
   useEffect(() => {
-    initData();
+    fetchTests();
   }, []);
 
-  const initData = async () => {
+  useEffect(() => {
+    fetchTests();
+  }, [testQuantity]);
+
+  const fetchTests = async () => {
     setError(null);
     setLoading(true);
 
@@ -44,7 +49,7 @@ export const TestCasesContainer = () => {
     setChartData(undefined);
     setFlakinessData(undefined);
 
-    const testCases: TestCases = await getTestCases();
+    const testCases: TestCases = await getTestCases(testQuantity);
 
     if (testCases?.test_cases) {
       const filteredTable = testCases.test_cases.map((row) => ({
@@ -80,6 +85,10 @@ export const TestCasesContainer = () => {
     setFloatPanels(!floatPanels);
   }
 
+  const handleTestQuantityChange = (quantity: string) => {
+    setTestQuantity(quantity);
+  }
+
   const tableStyles = [{ name: "Name", style: "w-4/6" }];
 
   return (
@@ -89,7 +98,7 @@ export const TestCasesContainer = () => {
         {error && <span className="text-error mt-1 text-sm">{error}</span>}
         <button
           className="btn btn-primary btn-xs float-right"
-          onClick={initData}
+          onClick={fetchTests}
         >
           Reload
         </button>
@@ -121,6 +130,8 @@ export const TestCasesContainer = () => {
                   }}
                   getTableData={getTableResults}
                   headerStyle={tableStyles}
+                  rowsQuantity={testQuantity}
+                  onRowsChange={handleTestQuantityChange}
                 />
               )}
             </div>
