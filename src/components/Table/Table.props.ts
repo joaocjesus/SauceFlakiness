@@ -24,6 +24,8 @@ interface TableProps {
     filter?: { column: string; inputLabel: string };
     getTableData?: Function;
     headerStyle?: HeaderStyleProps[];
+    rowsQuantity?: string;
+    onRowsChange?: Function;
 }
 
 export { TableOrder };

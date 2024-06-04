@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { sortArray } from "../../helpers/helpers";
 import { ColumnHeader } from "./ColumnHeader";
 import { TableOrder, SortProps, TableProps, KeyArray } from "./Table.props";
+import { TextFieldWithButton } from "../TextFieldWithButton";
+
+const inputStyles = "input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2";
 
 const Table = ({
   data,
@@ -11,6 +14,8 @@ const Table = ({
   filter,
   getTableData,
   headerStyle,
+  rowsQuantity,
+  onRowsChange,
 }: TableProps) => {
   const defaultSort = ({
     column: Object.keys(data[0])[0],
@@ -21,6 +26,7 @@ const Table = ({
   const [tableData, setTableData] = useState<KeyArray>([...data]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [columnSort, setColumnSort] = useState<SortProps>(sort || defaultSort);
+  const [rowsLength, setRowsLengthQuantity] = useState(rowsQuantity || "0");
 
   useEffect(() => {
     setHeaders(Object.keys(data[0]));
@@ -41,6 +47,12 @@ const Table = ({
       getTableData(tableData);
     }
   }, [tableData]);
+
+  useEffect(() => {
+    if (onRowsChange) {
+      onRowsChange(rowsLength);
+    }
+  }, [rowsLength]);
 
   const filterData = () => {
     const sourceData = [...data];
@@ -75,7 +87,7 @@ const Table = ({
   const renderTotals = () => (
     <tr className="bg-accent">
       {headers.map((header, index) => (
-        <td key={index}>
+        <td className="px-2 py-1.5" key={index}>
           {index === 0 && "Totals"}
           {totalsRow && typeof data[0][header] === "number"
             ? data.reduce((sum, row) => sum + Number(row[header]), 0)
@@ -96,6 +108,10 @@ const Table = ({
     setTestNameFilter("");
   }
 
+  const handleTestQuantityChange = (quantity: string) => {
+    setRowsLengthQuantity(quantity);
+  }
+
   return (
     <div className="mt-5 border border-accent rounded-lg p-3">
       {title && (
@@ -107,22 +123,27 @@ const Table = ({
         <>
           {filter && (
             <div className="mt-5">
-              <label htmlFor="test-name">{filter.inputLabel}</label>
-              <input
-                type="text"
-                id="test-name"
-                value={testNameFilter}
-                onChange={handleFilterChange}
-                className="input input-bordered border-secondary focus:border-primary focus:outline-1 hover:border-primary input-sm ml-2 w-96"
+              <TextFieldWithButton
+                label={filter.inputLabel}
+                inputValue={testNameFilter}
+                onInputChange={handleFilterChange}
+                buttonLabel="X"
+                buttonTitle="Clear filter"
+                onButtonClick={clearFilter}
+                inputStyles={inputStyles + " w-72"}
+                buttonStyles="btn-sm btn-secondary text-primary hover:text-white hover:bg-red-800 rounded-md ml-2"
               />
-              <button
-                className="btn-sm btn-secondary text-primary hover:text-white hover:bg-red-800 rounded-md ml-2"
-                title="Clear filter"
-                onClick={clearFilter}
-              >
-                X
-              </button>
-              <div className="h-6">
+              <TextFieldWithButton
+                styles="mt-3"
+                label="Test cases quantity"
+                inputValue={rowsLength}
+                buttonLabel="Fetch"
+                buttonTitle="Test quantity"
+                onButtonClick={handleTestQuantityChange}
+                inputStyles={inputStyles + " w-24"}
+                buttonStyles="btn-sm btn-secondary text-primary hover:text-white hover:bg-red-800 rounded-md ml-2"
+              />
+              <div className="h-6 mt-3">
                 {tableData.length > 0 && (
                   <span className="text-sm text-primary">
                     Showing {tableData.length} results.
@@ -136,12 +157,12 @@ const Table = ({
               </div>
             </div>
           )}
-          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[500px]">
+          <div className="mt-2 overflow-y-auto border border-blue-300 rounded-lg max-h-[65vh]">
             <table className="w-full table-compact">
-              <thead className="bg-secondary text-primary h-10 text-left sticky top-0">
+              <thead className="bg-secondary text-primary text-sm h-10 text-left sticky top-0">
                 <tr>
                   {headers.map((header, index) => <ColumnHeader
-                  key={index}
+                    key={index}
                     header={header}
                     index={index}
                     columnSort={columnSort}
@@ -152,14 +173,14 @@ const Table = ({
                 </tr>
                 {totalsRow === "above" && renderTotals()}
               </thead>
-              <tbody>
+              <tbody className=" text-primary text-sm">
                 {tableData.map((row: any, rowIndex: number) => (
                   <tr
                     key={`row-${rowIndex}`}
                     className="odd:bg-accent odd:bg-opacity-20 hover:bg-accent hover:bg-opacity-30"
                   >
                     {headers.map((header, index) => (
-                      <td key={`row-${rowIndex}-${index}`}>{row[header]}</td>
+                      <td className="px-2 py-1.5" key={`row-${rowIndex}-${index}`}>{row[header]}</td>
                     ))}
                   </tr>
                 ))}

@@ -13,15 +13,15 @@ const {
 const ENDPOINT = `${API_URL}${TESTS_ENDPOINT}`;
 const encodedAuthString = (Buffer.from(`${USERNAME}:${PASSWORD}`).toString('base64'));
 
-export const getTestCases = async () => {
+export const getTestCases = async (limit?: string) => {
 
   throwErrorIfAnyEmpty({ USERNAME, PASSWORD, ORG_ID, API_URL, ENDPOINT, TESTS_ENDPOINT });
-
+  
   try {
     const request = new URL(ENDPOINT);
     const params = new URLSearchParams({
       org_id: ORG_ID || '',
-      limit: '5000',
+      limit: limit || '5000',
     });
 
     request.search = params.toString();
